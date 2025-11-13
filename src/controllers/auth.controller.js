@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
-import { bodyToSignUp, bodyToSignIn, bodyToRefresh } from "../dtos/auth.dto.js";
-import { signUp, signIn, signOut, refresh } from "../services/auth.service.js";
-import { InvalidRequestError } from "../errors/auth.error.js";
+import { bodyToSignUp, bodyToSignIn } from "../dtos/auth.dto.js";
+import { signUp, signIn } from "../services/auth.service.js";
 
 export const handleSignUp = async (req, res, next) => {
   /*
@@ -18,11 +17,11 @@ export const handleSignUp = async (req, res, next) => {
             properties: {
               email: { type: 'string', example: 'email@email.com' },
               name: { type: 'string', example: '이름' },
-              username: { type: 'string', example: 'username' },
+              // username: { type: 'string', example: 'username' },
               password: { type: 'string', example: '비밀번호' },
-              avatar: { type: 'string', example: 'avatar.png' },
+              // avatar: { type: 'string', example: 'avatar.png' },
             },
-            required: ['email', 'name', 'username', 'password']
+            required: ['email', 'name', 'password']
           }
         }
       }
@@ -43,8 +42,8 @@ export const handleSignUp = async (req, res, next) => {
                   userId: { type: 'number', example: 1 },
                   email: { type: 'string', example: 'email@email.com' },
                   name: { type: 'string', example: '이름' },
-                  username: { type: 'string', example: 'username' },
-                  avatar: { type: 'string', example: 'avatar.png' },
+                  // username: { type: 'string', example: 'username' },
+                  // avatar: { type: 'string', example: 'avatar.png' },
                   createdAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' },
                   updatedAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' },
                 }
@@ -101,12 +100,8 @@ export const handleSignUp = async (req, res, next) => {
       }
     }
 */
-  try {
-    const auth = await signUp(bodyToSignUp(req.body));
-    res.status(StatusCodes.OK).success(auth);
-  } catch (err) {
-    return next(err);
-  }
+  const auth = await signUp(bodyToSignUp(req.body));
+  res.status(StatusCodes.OK).success(auth);
 };
 export const handleSignIn = async (req, res, next) => {
   /*
@@ -143,8 +138,6 @@ export const handleSignIn = async (req, res, next) => {
                 type: 'object',
                 properties: {
                   userId: { type: 'number', example: 1 },
-                  accessToken: { type: 'string', example: 'accessToken' },
-                  refreshToken: { type: 'string', example: 'refreshToken' },
                   createdAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' },
                   updatedAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' }
                 }
@@ -178,363 +171,6 @@ export const handleSignIn = async (req, res, next) => {
       }
     }
 */
-  try {
-    const auth = await signIn(bodyToSignIn(req.body));
-    res.status(StatusCodes.OK).success(auth);
-  } catch (err) {
-    return next(err);
-  }
-};
-export const handleSignOut = async (req, res, next) => {
-  /*
-    #swagger.tags = ['Auth']
-    #swagger.summary = '로그아웃'
-    #swagger.description = '로그아웃을 위한 API입니다.'
-
-    #swagger.responses[200] = {
-      description: '로그아웃 성공',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'SUCCESS' },
-              error: { type: 'object', example: null },
-              success: {
-                type: 'object',
-                properties: {
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    #swagger.responses[400] = {
-      description: '잘못된 요청',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'invalid_request' },
-                  reason: { type: 'string', example: '요청 데이터가 잘못되었습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[401] = {
-      description: 'Access Token이 없습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'unauthorized' },
-                  reason: { type: 'string', example: 'Access Token이 없습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[403] = {
-      description: '토큰 형식이 올바르지 않습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'not_access_token' },
-                  reason: { type: 'string', example: 'Access Token 형식이 올바르지 않거나 유효하지 않습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[419] = {
-      description: '토큰이 만료 되었습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'expired_access_token' },
-                  reason: { type: 'string', example: 'Access Token이 만료되었습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-*/
-  try {
-    const auth = await signOut(req.user.userId);
-    res.status(StatusCodes.OK).success(auth);
-  } catch (err) {
-    return next(err);
-  }
-};
-export const handleRefresh = async (req, res, next) => {
-  /*
-    #swagger.tags = ['Auth']
-    #swagger.summary = '리프레시 토큰 갱신'
-    #swagger.description = '리프레시 토큰을 갱신하기 위한 API입니다.'
-    #swagger.security = []
-    #swagger.requestBody = {
-      required: true,
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              refreshToken: { type: 'string', example: 'refreshToken' },
-            },
-            required: ['refreshToken']
-          }
-        }
-      }
-    }
-
-    #swagger.responses[200] = {
-      description: '리프레시 토큰 갱신 성공',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'SUCCESS' },
-              error: { type: 'object', example: null },
-              success: {
-                type: 'object',
-                properties: {
-                  userId: { type: 'number', example: 1 },
-                  accessToken: { type: 'string', example: 'accessToken' },
-                  refreshToken: { type: 'string', example: 'refreshToken' },
-                  createdAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' },
-                  updatedAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    #swagger.responses[400] = {
-      description: '잘못된 요청',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'invalid_request' },
-                  reason: { type: 'string', example: '요청 데이터가 잘못되었습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[403] = {
-      description: '유효하지 않은 리프레시 토큰입니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'not_refresh_token' },
-                  reason: { type: 'string', example: '유효하지 않은 리프레시 토큰입니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-*/
-  try {
-    const auth = await refresh(bodyToRefresh(req.body));
-    res.status(StatusCodes.OK).success(auth);
-  } catch (err) {
-    return next(err);
-  }
-};
-export const handleProtect = async (req, res, next) => {
-  /*
-    #swagger.tags = ['Auth']
-    #swagger.summary = '엑세스 토큰 확인'
-    #swagger.description = '엑세스 토큰을 확인하기 위한 API입니다.'
-
-    #swagger.responses[200] = {
-      description: '엑세스 토큰 확인 성공',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'SUCCESS' },
-              error: { type: 'object', example: null },
-              success: {
-                type: 'object',
-                properties: {
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    #swagger.responses[400] = {
-      description: '잘못된 요청',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'invalid_request' },
-                  reason: { type: 'string', example: '요청 데이터가 잘못되었습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[401] = {
-      description: 'Access Token이 없습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'unauthorized' },
-                  reason: { type: 'string', example: 'Access Token이 없습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[403] = {
-      description: '토큰 형식이 올바르지 않습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'not_access_token' },
-                  reason: { type: 'string', example: 'Access Token 형식이 올바르지 않거나 유효하지 않습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[419] = {
-      description: '토큰이 만료 되었습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'expired_access_token' },
-                  reason: { type: 'string', example: 'Access Token이 만료되었습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-*/
-  try {
-    const auth = req.user.userId;
-    if (auth) {
-      res.status(StatusCodes.OK).success({});
-    } else {
-      return next(new InvalidRequestError());
-    }
-  } catch (err) {
-    return next(err);
-  }
+  const auth = await signIn(bodyToSignIn(req.body));
+  res.status(StatusCodes.OK).success(auth);
 };
