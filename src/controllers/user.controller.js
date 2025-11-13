@@ -56,81 +56,8 @@ export const handleUserProfile = async (req, res, next) => {
         }
       }
     }
-    
-    #swagger.responses[401] = {
-      description: 'Access Token이 없습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'unauthorized' },
-                  reason: { type: 'string', example: 'Access Token이 없습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[403] = {
-      description: '토큰 형식이 올바르지 않습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'not_access_token' },
-                  reason: { type: 'string', example: 'Access Token 형식이 올바르지 않거나 유효하지 않습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
-    
-    #swagger.responses[419] = {
-      description: '토큰이 만료 되었습니다',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              resultType: { type: 'string', example: 'FAIL' },
-              error: {
-                type: 'object',
-                properties: {
-                  errorCode: { type: 'string', example: 'expired_access_token' },
-                  reason: { type: 'string', example: 'Access Token이 만료되었습니다.' },
-                  data: { type: 'object', example: null }
-                }
-              },
-              success: { type: 'object', example: null }
-            }
-          }
-        }
-      }
-    }
 */
-
-  try {
-    const user = await userProfile(req.user.userId);
-    res.status(StatusCodes.OK).success(user);
-  } catch (err) {
-    return next(err);
-  }
+  const userId = req.path.userId;
+  const user = await userProfile(userId);
+  res.status(StatusCodes.OK).success(user);
 };
