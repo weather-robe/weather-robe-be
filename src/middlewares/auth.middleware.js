@@ -1,3 +1,4 @@
+// 확장성을 위해 일단 남겨둠
 import {
   AuthError,
   ExpirationAccessTokenError,
