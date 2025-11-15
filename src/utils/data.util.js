@@ -1,5 +1,9 @@
 import axios from "axios";
-import { getFormattedToday } from "./date.util.js";
+import {
+  getFormattedToday,
+  getFormattedTime,
+  getFormattedYesterday,
+} from "./date.util.js";
 
 export const currentAirPollution = async (
   sidoName,
@@ -18,7 +22,7 @@ export const currentAirPollution = async (
 };
 
 export const forecastUltrafineDust = async (
-  searchDate = getFormattedToday(),
+  searchDate = getFormattedToday("dash"),
   numberOfRows = 100,
   pageNo = 1,
   returnType = "json"
@@ -29,5 +33,68 @@ export const forecastUltrafineDust = async (
     return response.data;
   } catch (error) {
     console.error("Error fetching forecast ultrafine dust:", error);
+  }
+};
+
+export const currentUltraSrtPop = async (
+  nx = 55,
+  ny = 127,
+  base_date = parseInt(getFormattedTime(new Date())) < 600
+    ? getFormattedYesterday()
+    : getFormattedToday(),
+  base_time = "0600",
+  pageNo = 1,
+  numOfRows = 100,
+  dataType = "json"
+) => {
+  try {
+    const url = `${process.env.DEFAULT_POP_URL}/getUltraSrtNcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
+    const response = await axios.get(url);
+    console.log(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching ultra short-term POP:", error);
+  }
+};
+
+export const forecastUltraSrtPop = async (
+  nx = 55,
+  ny = 127,
+  base_date = parseInt(getFormattedTime(new Date())) < 600
+    ? getFormattedYesterday()
+    : getFormattedToday(),
+  base_time = "0600",
+  pageNo = 1,
+  numOfRows = 100,
+  dataType = "json"
+) => {
+  try {
+    const url = `${process.env.DEFAULT_POP_URL}/getUltraSrtFcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
+    const response = await axios.get(url);
+    console.log(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching ultra short-term POP forecast:", error);
+  }
+};
+
+export const forecastSrtPop = async (
+  nx = 55,
+  ny = 127,
+  base_date = parseInt(getFormattedTime(new Date())) < 600
+    ? getFormattedYesterday()
+    : getFormattedToday(),
+  base_time = "0600",
+  pageNo = 1,
+  numOfRows = 100,
+  dataType = "json"
+) => {
+  try {
+    const url = `${process.env.DEFAULT_POP_URL}/getVilageFcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
+    const response = await axios.get(url);
+    console.log(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching short-term POP forecast:", error);
   }
 };
