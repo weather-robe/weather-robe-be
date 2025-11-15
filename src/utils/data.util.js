@@ -9,7 +9,7 @@ export const currentAirPollution = async (
   ver = "1.3"
 ) => {
   try {
-    const url = `${process.env.DEFAULT_AIR_POLLUTION_URL}/getCtprvnRltmMesureDnsty?serviceKey=${process.env.DATA_GO_API_KEY}&returnType=${returnType}&numOfRows=${numberOfRows}&pageNo=${pageNo}&sidoName=${sidoName}&ver=${ver}`;
+    const url = `${process.env.DEFAULT_AIR_POLLUTION_URL}/getCtprvnRltmMesureDnsty?serviceKey=${process.env.DATA_API_KEY}&returnType=${returnType}&numOfRows=${numberOfRows}&pageNo=${pageNo}&sidoName=${sidoName}&ver=${ver}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
@@ -18,13 +18,13 @@ export const currentAirPollution = async (
 };
 
 export const forecastUltrafineDust = async (
-  searchDate = getFormattedToday()
+  searchDate = getFormattedToday(),
   numberOfRows = 100,
   pageNo = 1,
-  returnType = "json",
+  returnType = "json"
 ) => {
   try {
-    const url = `${process.env.DEFAULT_AIR_POLLUTION_URL}/getMinuDustFrcstDspth?serviceKey=${process.env.DATA_GO_API_KEY}&returnType=${returnType}&numOfRows=${numberOfRows}&pageNo=${pageNo}&searchDate=${searchDate}`;
+    const url = `${process.env.DEFAULT_AIR_POLLUTION_URL}/getMinuDustFrcstDspth?serviceKey=${process.env.DATA_API_KEY}&returnType=${returnType}&numOfRows=${numberOfRows}&pageNo=${pageNo}&searchDate=${searchDate}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
