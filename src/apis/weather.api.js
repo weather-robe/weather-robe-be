@@ -1,4 +1,5 @@
 /*
+현재 날씨 조회 API
 사용 가능한 값들:
 weather[0].main: 날씨 상태 (예: Clear, Clouds, Rain)
 weather[0].description: 날씨 설명 (예: 맑음, 구름 많음, 비)
@@ -10,13 +11,14 @@ main.pressure: 기압
 main.humidity: 습도
 wind.speed: 바람 속도
 wind.deg: 바람 방향
+pop, snow도 제공해줌
 */
 
 import axios from "axios";
 
 export const currentWeather = async (
-  latitude,
-  longitude,
+  latitude = 37.5674,
+  longitude = 126.9755,
   units = "metric",
   lang = "kr"
 ) => {
@@ -30,8 +32,8 @@ export const currentWeather = async (
 };
 
 export const forecastWeatherHourly = async (
-  latitude,
-  longitude,
+  latitude = 37.5674,
+  longitude = 126.9755,
   units = "metric",
   lang = "kr"
 ) => {
@@ -45,8 +47,8 @@ export const forecastWeatherHourly = async (
 };
 
 export const forecastWeatherDaily = async (
-  latitude,
-  longitude,
+  latitude = 37.5674,
+  longitude = 126.9755,
   units = "metric",
   lang = "kr"
 ) => {
