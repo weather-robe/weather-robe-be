@@ -27,3 +27,8 @@ export const getFormattedTime = (date, type = "none") => {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return type === "none" ? `${hours}${minutes}` : `${hours}:${minutes}`;
 };
+
+export const dtToDateTime = (dt = 1763301600) => {
+  const date = new Date(dt * 1000);
+  return date;
+};
