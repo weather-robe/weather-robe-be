@@ -8,6 +8,6 @@ export const addUser = async (data) => {
   return created.id;
 };
 export const getUser = async (userId) => {
-  const user = await prisma.user.findFirstOrThrow({ where: { id: userId } });
+  const user = await prisma.user.findFirst({ where: { id: userId } });
   return user;
 };

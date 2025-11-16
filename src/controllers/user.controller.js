@@ -57,7 +57,7 @@ export const handleUserProfile = async (req, res, next) => {
       }
     }
 */
-  const userId = req.path.userId;
+  const userId = req.user.userId;
   const user = await userProfile(userId);
   res.status(StatusCodes.OK).success(user);
 };
