@@ -1,3 +1,4 @@
+import axios from "axios";
 import {
   getFormattedToday,
   getFormattedTime,
@@ -51,7 +52,6 @@ export const currentUltraSrtPop = async (
   try {
     const url = `${process.env.DEFAULT_POP_URL}/getUltraSrtNcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
     const response = await axios.get(url);
-    console.log(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching ultra short-term POP:", error);
@@ -72,7 +72,6 @@ export const forecastUltraSrtPop = async (
   try {
     const url = `${process.env.DEFAULT_POP_URL}/getUltraSrtFcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
     const response = await axios.get(url);
-    console.log(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching ultra short-term POP forecast:", error);
@@ -93,7 +92,6 @@ export const forecastSrtPop = async (
   try {
     const url = `${process.env.DEFAULT_POP_URL}/getVilageFcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
     const response = await axios.get(url);
-    console.log(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching short-term POP forecast:", error);
