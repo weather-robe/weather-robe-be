@@ -7,7 +7,19 @@ export const addUser = async (data) => {
   const created = await prisma.user.create({ data: data });
   return created.id;
 };
+
 export const getUser = async (userId) => {
   const user = await prisma.user.findFirst({ where: { id: userId } });
   return user;
+};
+
+export const patchUserLocation = async (userId, location) => {
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      location: location,
+      locationTimeAt: new Date(),
+    },
+  });
+  return updated;
 };
