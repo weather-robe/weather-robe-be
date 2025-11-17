@@ -32,3 +32,17 @@ export const dtToDateTime = (dt = 1763301600) => {
   const date = new Date(dt * 1000);
   return date;
 };
+
+export const dateTimeToDt = (date) => {
+  return Math.floor(date.getTime() / 1000);
+};
+
+export const spliceMinutesFromDateTime = (date) => {
+  date.setMinutes(0, 0, 0);
+  return date;
+};
+
+export const timeDiffInHours = (startTime, endTime) => {
+  const diffInMs = endTime - startTime;
+  return diffInMs / (1000 * 60 * 60);
+};
