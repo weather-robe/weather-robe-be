@@ -1,14 +1,21 @@
 import axios from "axios";
 
-export const coordsToAddress = async (
-  latitude = 37.5674,
-  longitude = 126.9755
-) => {
+export const coordsToAddress = async (latitude, longitude, type = "PARCEL") => {
   try {
-    const url = `${process.env.DEFAULT_VWORLD_URL}?service=data&request=GetFeature&data=LT_C_ADSIGG_INFO&geomFilter=POINT(${longitude} ${latitude})&key=${process.env.VWORLD_API_KEY}&geometry=false&format=json`;
+    const url = `${process.env.DEFAULT_VWORLD_URL}/address?service=address&request=getAddress&key=${process.env.VWORLD_API_KEY}&point=${longitude},${latitude}&format=json&type=${type}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching address from coordinates:", error);
+  }
+};
+
+export const addressToCoords = async (address, type = "PARCEL") => {
+  try {
+    const url = `${process.env.DEFAULT_VWORLD_URL}/address?service=address&request=getcoord&key=${process.env.VWORLD_API_KEY}&address=${address}&format=json&type=${type}`;
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching coordinates from address:", error);
   }
 };
