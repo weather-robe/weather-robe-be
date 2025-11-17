@@ -1,12 +1,19 @@
-import { coordsToAddress } from "../apis/vworld.api.js";
+import { addressToCoords, coordsToAddress } from "../apis/vworld.api.js";
 
 export const reverseGeocode = async (latitude, longitude) => {
   const response = await coordsToAddress(latitude, longitude);
   const data = {
-    sig_cd:
-      response.response.result.featureCollection.features[0].properties.sig_cd,
-    address:
-      response.response.result.featureCollection.features[0].properties.full_nm,
+    sido: response.response.result[0].structure.level1,
+    address: response.response.result[0].structure,
+  };
+  return data;
+};
+
+export const geocode = async (address) => {
+  const response = await addressToCoords(address);
+  const data = {
+    latitude: response.response.result.point.y,
+    longitude: response.response.result.point.x,
   };
   return data;
 };
