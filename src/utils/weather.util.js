@@ -8,7 +8,7 @@ import { reverseGeocode } from "./geocoder.util.js";
 import { getDustAddress } from "./address.util.js";
 import { dtToDateTime } from "./date.util.js";
 
-export const getCurrentWheather = async (latitude, longitude) => {
+export const getCurrentWeather = async (latitude, longitude) => {
   const openweather_data = await currentWeather(latitude, longitude);
   const { address } = await reverseGeocode(latitude, longitude);
   const sidoName = getDustAddress(address);
@@ -32,7 +32,7 @@ export const getCurrentWheather = async (latitude, longitude) => {
   return data;
 };
 
-export const getforecastWheatherHourly = async (latitude, longitude) => {
+export const getforecastWeatherHourly = async (latitude, longitude) => {
   const openweather_datas = await forecastWeatherHourly(latitude, longitude);
   const { address } = await reverseGeocode(latitude, longitude);
   const sidoName = getDustAddress(address);
@@ -63,7 +63,7 @@ export const getforecastWheatherHourly = async (latitude, longitude) => {
   };
   return data;
 };
-export const getforecastWheatherDaily = async (latitude, longitude) => {
+export const getforecastWeatherDaily = async (latitude, longitude) => {
   const openweather_datas = await forecastWeatherDaily(latitude, longitude);
   const datas = [];
   for (let openweather_data of openweather_datas.list) {
