@@ -28,7 +28,7 @@ model User {
 model Weather {
   id         Int      @id @default(autoincrement())
   dtype      String   @db.VarChar(20) // current, forecast_daily, forecast_hourly
-  dt         DateTime @db.DateTime(6)
+  dt         Int      @db.Int
   sido       String   @db.VarChar(100)
   main       String   @db.VarChar(20)
   temp       Float    @db.Float

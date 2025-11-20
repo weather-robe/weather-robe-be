@@ -1,12 +1,11 @@
 import { prisma } from "../configs/db.config.js";
-import { spliceMinutesFromDateTime } from "../utils/date.util.js";
 
-export const getWeatherBySidoAndDtype = async (sido, dtype) => {
+export const getWeatherBySidoAndDtypeAndDt = async (sido, dtype, dt) => {
   const weather = await prisma.weather.findFirst({
     where: {
       sido: sido,
       dtype: dtype,
-      dt: spliceMinutesFromDateTime(new Date()),
+      dt: dt,
     },
   });
   return weather;

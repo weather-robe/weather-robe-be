@@ -29,17 +29,35 @@ export const getFormattedTime = (date, type = "none") => {
 };
 
 export const dtToDateTime = (dt = 1763301600) => {
-  const date = new Date(dt * 1000);
-  return date;
+  const date = new Date(parseInt(dt) * 1000);
+  return date.toString();
 };
 
 export const dateTimeToDt = (date) => {
-  return Math.floor(date.getTime() / 1000);
+  const dt = Math.floor(date.getTime() / 1000);
+  return dt;
 };
 
 export const spliceMinutesFromDateTime = (date) => {
   date.setMinutes(0, 0, 0);
-  return date;
+  return date.getTime();
+};
+
+export const spliceMinutesFromDt = (dt) => {
+  const date = new Date(dt);
+  date.setMinutes(0, 0, 0);
+  return dateTimeToDt(date);
+};
+
+export const spliceHoursFromDateTime = (date) => {
+  date.setHours(0, 0, 0, 0);
+  return dateTimeToDt(date);
+};
+
+export const spliceHoursFromDt = (dt) => {
+  const date = new Date(dt);
+  date.setHours(0, 0, 0, 0);
+  return dateTimeToDt(date);
 };
 
 export const timeDiffInHours = (startTime, endTime) => {

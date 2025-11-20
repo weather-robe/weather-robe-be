@@ -6,17 +6,24 @@ import {
 import { currentAirPollution } from "../apis/data.api.js";
 import { reverseGeocode } from "./geocoder.util.js";
 import { getDustAddress } from "./address.util.js";
-import { dtToDateTime } from "./date.util.js";
+import {
+  dateTimeToDt,
+  dtToDateTime,
+  spliceMinutesFromDateTime,
+  spliceMinutesFromDt,
+} from "./date.util.js";
 
 export const getCurrentWeather = async (latitude, longitude) => {
   const openweather_data = await currentWeather(latitude, longitude);
   const { sido } = await reverseGeocode(latitude, longitude);
   const sidoName = getDustAddress(sido);
   const dust_data = await currentAirPollution(sidoName);
-  const dt = dtToDateTime(openweather_data.dt);
-  dt.setMinutes(0, 0, 0);
+  const dt = openweather_data.dt + 9 * 60 * 60; // 한국 시간으로 변환
+  const date = new Date(dt * 1000);
+  date.setMinutes(0, 0, 0);
+  const edit_dt = date.getTime() / 1000;
   const data = {
-    dt: dt,
+    dt: edit_dt,
     sido: openweather_data.name,
     main: openweather_data.weather[0].main,
     temp: openweather_data.main.temp,
@@ -42,7 +49,7 @@ export const getforecastWeatherHourly = async (latitude, longitude) => {
   const datas = [];
   for (let openweather_data of openweather_datas.list) {
     const data = {
-      dt: dtToDateTime(openweather_data.dt),
+      dt: openweather_data.dt,
       sido: openweather_datas.city.name,
       main: openweather_data.weather[0].main,
       temp: openweather_data.main.temp,
@@ -86,8 +93,9 @@ export const getforecastWeatherDaily = async (latitude, longitude) => {
       eve: openweather_data.feels_like.eve,
       morn: openweather_data.feels_like.morn,
     };
+    const dt = openweather_data.dt - 3 * 60 * 60; // 한국 시간으로 변환
     const data = {
-      dt: dtToDateTime(openweather_data.dt),
+      dt: dt,
       sido: openweather_datas.city.name,
       main: openweather_data.weather[0].main,
       temp: temp,
