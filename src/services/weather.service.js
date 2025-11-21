@@ -15,6 +15,7 @@ import {
   addDailyWeather,
   getWeatherBySidoAndDtypeAndDt,
 } from "../repositories/weather.repository.js";
+import { responseFromWeatherToday } from "../dtos/weather.dto.js";
 
 const DTYPE = {
   CURRENT: "current",
@@ -22,19 +23,20 @@ const DTYPE = {
   FORECAST_HOURLY: "forecast_hourly",
 };
 
-export const getWeatherToday = async (user, latitude, longitude) => {
-  longitude = 127;
-  latitude = 37;
+export const getWeatherToday = async ({ user, latitude, longitude }) => {
+  // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
   if (!latitude || !longitude) {
-    return null; //throw new Error("위도와 경도가 필요합니다.");
+    //return null; //throw new Error("위도와 경도가 필요합니다.");
+    latitude = 37.5665;
+    longitude = 126.978;
   }
   const current_address = await reverseGeocode(latitude, longitude);
   let sido = user.location;
-  // 기본 위치가 없으면 현재 위치를 기본 위치로 설정
+  // 유저가 제공한 위치가 없으면 현재 위치를 서울로 설정
   if (!sido) {
-    sido = "경기도";
+    sido = "서울특별시";
   }
-  const time = timeDiffInHours(user.locationTimeAt, new Date());
+  // const time = timeDiffInHours(user.locationTimeAt, new Date());
   // 이미 해당 지역의 날씨와 시간이 1시간 이내이면 에러 반환
   // if (current_address.sido === sido && time < 1) {
   //   return null; // throw new Error("이미 해당 지역의 날씨 정보입니다.");
@@ -106,13 +108,24 @@ export const getWeatherToday = async (user, latitude, longitude) => {
       pm10: pm10,
       pm25: pm25,
     };
-    ({ daily_weather } = await addDailyWeather(user.id, weather_data));
+    daily_weather = (await addDailyWeather(user.id, weather_data))
+      .daily_weather;
   }
   // 최종적으로 사용자 위치 업데이트
   const updatedUser = await patchUserLocation(user.id, current_address.sido);
-  return {
+  const yesterday_dt = daily_dt - 24 * 60 * 60;
+  let yesterday_weather = await getWeatherBySidoAndDtypeAndDt(
+    sido,
+    DTYPE.FORECAST_DAILY,
+    yesterday_dt
+  );
+  if (!yesterday_weather) {
+    console.log("어제 날씨 DB에 없음");
+  }
+  return responseFromWeatherToday({
+    user: updatedUser,
     current_weather: current_weather,
     daily_weather: daily_weather,
-    user: updatedUser,
-  };
+    yesterday_weather: yesterday_weather,
+  });
 };

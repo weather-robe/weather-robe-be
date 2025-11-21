@@ -28,9 +28,9 @@ export const getFormattedTime = (date, type = "none") => {
   return type === "none" ? `${hours}${minutes}` : `${hours}:${minutes}`;
 };
 
-export const dtToDateTime = (dt = 1763301600) => {
+export const dtToDateTime = (dt) => {
   const date = new Date(parseInt(dt) * 1000);
-  return date.toString();
+  return date;
 };
 
 export const dateTimeToDt = (date) => {
