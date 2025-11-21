@@ -1,12 +1,10 @@
 import { responseFromUser } from "../dtos/user.dto.js";
 import { addUser, getUser } from "../repositories/user.repository.js";
 import { getUserSignIn } from "../repositories/auth.repository.js";
-import {
-  DuplicateEmailError,
-  InvalidRequestError,
-} from "../errors/auth.error.js";
+import { DuplicateEmailError } from "../errors/auth.error.js";
 import { responseFromAuth } from "../dtos/auth.dto.js";
 import { createHashedString } from "../utils/crypto.util.js";
+import { InvalidRequestError } from "../errors/common.error.js";
 
 export const signUp = async (data) => {
   const hashedPassword = createHashedString(data.password);
