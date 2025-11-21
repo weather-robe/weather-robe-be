@@ -1,10 +1,4 @@
 import { patchUserLocation } from "../repositories/user.repository.js";
-import {
-  spliceHoursFromDateTime,
-  spliceMinutesFromDateTime,
-  spliceMinutesFromDt,
-  timeDiffInHours,
-} from "../utils/date.util.js";
 import { geocode, reverseGeocode } from "../utils/geocoder.util.js";
 import {
   getCurrentWeather,
@@ -14,8 +8,14 @@ import {
   addWeather,
   addDailyWeather,
   getWeatherBySidoAndDtypeAndDt,
+  patchDailyWeather,
+  getDailyWeatherByUserIdAndWeatherId,
 } from "../repositories/weather.repository.js";
-import { responseFromWeatherToday } from "../dtos/weather.dto.js";
+import {
+  responseFromDailyWeatherFeedback,
+  responseFromWeatherToday,
+} from "../dtos/weather.dto.js";
+import { InvalidRequestError } from "../errors/common.error.js";
 
 const DTYPE = {
   CURRENT: "current",
@@ -127,5 +127,22 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
     current_weather: current_weather,
     daily_weather: daily_weather,
     yesterday_weather: yesterday_weather,
+  });
+};
+
+export const setFeedbackWeather = async ({ userId, weatherId, feedback }) => {
+  const daily_weather = await getDailyWeatherByUserIdAndWeatherId(
+    userId,
+    weatherId
+  );
+  if (!daily_weather) {
+    throw new InvalidRequestError("해당 일별 날씨 데이터가 없습니다.");
+  }
+  const updated_daily_weather = await patchDailyWeather(daily_weather.id, {
+    feeling_status: feedback,
+  });
+  return responseFromDailyWeatherFeedback({
+    userId,
+    daily_weather: updated_daily_weather,
   });
 };
