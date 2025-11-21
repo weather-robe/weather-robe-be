@@ -6,6 +6,6 @@ import {
 import { verifyWeatherId } from "../middlewares/weather.middleware.js";
 const route = express.Router();
 
-route.get("/", handleGetWeatherToday);
+route.post("/", handleGetWeatherToday);
 route.post("/:weatherId", verifyWeatherId, handleSetFeedbackWeather);
 export default route;

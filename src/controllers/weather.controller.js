@@ -13,19 +13,19 @@ export const handleGetWeatherToday = async (req, res, next) => {
     #swagger.tags = ['Weather']
     #swagger.summary = '오늘의 일기예보'
     #swagger.description = '현재, 오늘, 어제 온도 정보를 가져옵니다.'
-    #swagger.parameters['latitude'] = {
-      in: 'query',
-      description: 'latitude가 위치한 장소의 위도. 제공되지 않으면 서울시청으로 기본 설정.',
+    #swagger.requestBody = {
       required: false,
-      type: 'number',
-      example: 37.5665
-    }
-    #swagger.parameters['longitude'] = {
-      in: 'query',
-      description: 'longitude가 위치한 장소의 경도. 제공되지 않으면 서울시청으로 기본 설정.',
-      required: false,
-      type: 'number',
-      example: 126.978
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              latitude: { type: 'number', example: 37.5665 },
+              longitude: { type: 'number', example: 126.978 }
+            }
+          }
+        }
+      }
     }
     #swagger.responses[200] = {
       description: '오늘의 일기예보 조회 성공',
@@ -86,7 +86,7 @@ export const handleGetWeatherToday = async (req, res, next) => {
     }
   */
   const user = req.user;
-  const { latitude, longitude } = req.query;
+  const { latitude, longitude } = req.body;
   const result = await getWeatherToday(
     requestForWeatherToday(user, latitude, longitude)
   );
