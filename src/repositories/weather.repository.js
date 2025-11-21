@@ -32,9 +32,39 @@ export const getDailyWeatherByUserIdAndWeatherId = async (
   });
   return dailyWeather;
 };
+
+export const getWeathersBySidoAndDtypeAndDtRange = async (
+  sido,
+  dtype,
+  startDt,
+  endDt
+) => {
+  const weathers = await prisma.weather.findMany({
+    where: {
+      sido: sido,
+      dtype: dtype,
+      dt: {
+        gte: startDt,
+        lte: endDt,
+      },
+    },
+    orderBy: {
+      dt: "asc",
+    },
+  });
+  return weathers;
+};
+
 export const addWeather = async (data) => {
   const created = await prisma.weather.create({
     data: data,
+  });
+  return created;
+};
+
+export const addWeathers = async (datas) => {
+  const created = await prisma.weather.createMany({
+    data: datas,
   });
   return created;
 };
@@ -64,4 +94,18 @@ export const patchDailyWeather = async (dailyWeatherId, data) => {
     data: data,
   });
   return updated;
+};
+
+export const patchWeathersIndividually = async (ids, datas) => {
+  const updates = ids.map((id, index) => {
+    const data = datas[index];
+    return prisma.weather.update({
+      where: {
+        id: id,
+      },
+      data: data,
+    });
+  });
+  const result = await prisma.$transaction(updates);
+  return result;
 };

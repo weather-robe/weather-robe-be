@@ -1,4 +1,4 @@
-export const requestForWeatherToday = (user, latitude, longitude) => {
+export const requestForWeatherLocation = (user, latitude, longitude) => {
   return {
     user,
     latitude,
@@ -36,13 +36,13 @@ export const responseFromWeatherToday = ({
         max: daily_weather.temp_max,
         min: daily_weather.temp_min,
       },
-      feelsLike: daily_weather.feels_like,
+      feels_like: daily_weather.feels_like,
       humidity: daily_weather.humidity,
-      pop: daily_weather.pop,
-      rain: daily_weather.rain,
-      snow: daily_weather.snow,
-      windSpeed: daily_weather.wind_speed,
-      windDeg: daily_weather.wind_deg,
+      pop: daily_weather.pop ? daily_weather.pop : 0,
+      rain: daily_weather.rain ? daily_weather.rain : 0,
+      snow: daily_weather.snow ? daily_weather.snow : 0,
+      wind_speed: daily_weather.wind_speed,
+      wind_deg: daily_weather.wind_deg,
       pm10: daily_weather.pm10,
       pm25: daily_weather.pm25,
     },
@@ -66,5 +66,27 @@ export const responseFromDailyWeatherFeedback = ({ userId, daily_weather }) => {
       weatherId: daily_weather.weatherId,
       feedback: daily_weather.feeling_status,
     },
+  };
+};
+
+export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
+  return {
+    user: {
+      id: user.id,
+    },
+    hourly: hourly_weathers.map((weather) => ({
+      weatherId: weather.id,
+      datetime: new Date(weather.dt * 1000),
+      temp: weather.temp,
+      feels_like: weather.feels_like,
+      weather: weather.main,
+      pop: weather.pop ? weather.pop : 0,
+      rain: weather.rain ? weather.rain : 0,
+      humidity: weather.humidity,
+      wind_speed: weather.wind_speed,
+      wind_deg: weather.wind_deg,
+    })),
+    pm10: hourly_weathers.length > 0 ? hourly_weathers[0].pm10 : null,
+    pm25: hourly_weathers.length > 0 ? hourly_weathers[0].pm25 : null,
   };
 };

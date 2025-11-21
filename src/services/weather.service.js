@@ -2,7 +2,8 @@ import { patchUserLocation } from "../repositories/user.repository.js";
 import { geocode, reverseGeocode } from "../utils/geocoder.util.js";
 import {
   getCurrentWeather,
-  getforecastWeatherDaily,
+  getForecastWeatherDaily,
+  getForecastWeatherHourly,
 } from "../utils/weather.util.js";
 import {
   addWeather,
@@ -10,9 +11,13 @@ import {
   getWeatherBySidoAndDtypeAndDt,
   patchDailyWeather,
   getDailyWeatherByUserIdAndWeatherId,
+  getWeathersBySidoAndDtypeAndDtRange,
+  patchWeathersIndividually,
+  addWeathers,
 } from "../repositories/weather.repository.js";
 import {
   responseFromDailyWeatherFeedback,
+  responseFromHourlyWeather,
   responseFromWeatherToday,
 } from "../dtos/weather.dto.js";
 import { InvalidRequestError } from "../errors/common.error.js";
@@ -22,6 +27,8 @@ const DTYPE = {
   FORECAST_DAILY: "forecast_daily",
   FORECAST_HOURLY: "forecast_hourly",
 };
+
+const HOURLY = 48;
 
 export const getWeatherToday = async ({ user, latitude, longitude }) => {
   // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
@@ -74,7 +81,7 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
   );
   if (!daily_weather) {
     console.log("일별 예보 DB에 없음, 새로 추가");
-    const { items, pm10, pm25 } = await getforecastWeatherDaily(
+    const { items, pm10, pm25 } = await getForecastWeatherDaily(
       newLatitude,
       newLongitude
     );
@@ -144,5 +151,76 @@ export const setFeedbackWeather = async ({ userId, weatherId, feedback }) => {
   return responseFromDailyWeatherFeedback({
     userId,
     daily_weather: updated_daily_weather,
+  });
+};
+
+export const getHourlyWeather = async ({ user, latitude, longitude }) => {
+  // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
+  if (!latitude || !longitude) {
+    //return null; //throw new Error("위도와 경도가 필요합니다.");
+    latitude = 37.5665;
+    longitude = 126.978;
+  }
+  const current_address = await reverseGeocode(latitude, longitude);
+  let sido = user.location;
+  // 유저가 제공한 위치가 없으면 현재 위치를 서울로 설정
+  if (!sido) {
+    sido = "서울특별시";
+  }
+
+  const { latitude: newLatitude, longitude: newLongitude } = await geocode(
+    sido
+  );
+
+  const current_date = new Date();
+  current_date.setMinutes(0, 0, 0);
+  const current_dt = current_date.getTime() / 1000 + 9 * 60 * 60;
+
+  // DB에 모레 날씨 데이터가 있는지 확인 - 값이 부족했거나 1시간이 지났는 지 판단하기 위함
+  const day_after_tomorrow_dt = current_dt + HOURLY * 60 * 60;
+  const hourly_weather =
+    (await getWeathersBySidoAndDtypeAndDtRange(
+      sido,
+      DTYPE.FORECAST_HOURLY,
+      current_dt,
+      day_after_tomorrow_dt
+    )) || [];
+  console.log("DB에 있는 모레 날씨 데이터 수:", hourly_weather.length);
+  if (hourly_weather.length < HOURLY) {
+    console.log("현재 기준 모레 날씨 DB에 없음, 새로 추가 및 업데이트");
+    const hourly_weather_temp = await getForecastWeatherHourly(
+      newLatitude,
+      newLongitude
+    );
+    const ids = [];
+    const updateData = [];
+    const createData = [];
+    for (let i = 0; i < hourly_weather_temp.length; i++) {
+      const newWeather = {
+        ...hourly_weather_temp[i],
+        sido: sido,
+        dtype: DTYPE.FORECAST_HOURLY,
+      };
+      if (i < hourly_weather.length) {
+        ids.push(hourly_weather[i].id);
+        updateData.push(newWeather);
+      } else {
+        createData.push(newWeather);
+      }
+    }
+    if (ids.length > 0) {
+      hourly_weather.push(await patchWeathersIndividually(ids, updateData));
+      console.log("업데이트 할 데이터 수:", ids.length);
+    }
+    if (createData.length > 0) {
+      hourly_weather.push(await addWeathers(createData));
+      console.log("생성 할 데이터 수:", createData.length);
+    }
+  }
+  // 최종적으로 사용자 위치 업데이트
+  const updatedUser = await patchUserLocation(user.id, current_address.sido);
+  return responseFromHourlyWeather({
+    user: updatedUser,
+    hourly_weathers: hourly_weather,
   });
 };

@@ -41,7 +41,7 @@ export const getCurrentWeather = async (latitude, longitude) => {
   return data;
 };
 
-export const getforecastWeatherHourly = async (latitude, longitude) => {
+export const getForecastWeatherHourly = async (latitude, longitude) => {
   const openweather_datas = await forecastWeatherHourly(latitude, longitude);
   const { sido } = await reverseGeocode(latitude, longitude);
   const sidoName = getDustAddress(sido);
@@ -49,7 +49,7 @@ export const getforecastWeatherHourly = async (latitude, longitude) => {
   const datas = [];
   for (let openweather_data of openweather_datas.list) {
     const data = {
-      dt: openweather_data.dt,
+      dt: openweather_data.dt + 9 * 60 * 60,
       sido: openweather_datas.city.name,
       main: openweather_data.weather[0].main,
       temp: openweather_data.main.temp,
@@ -62,17 +62,14 @@ export const getforecastWeatherHourly = async (latitude, longitude) => {
       snow: openweather_data.snow?.["1h"],
       wind_speed: openweather_data.wind.speed,
       wind_deg: openweather_data.wind.deg,
+      pm10: parseFloat(dust_data.response.body.items[0].pm10Value),
+      pm25: parseFloat(dust_data.response.body.items[0].pm25Value),
     };
     datas.push(data);
   }
-  const data = {
-    items: datas,
-    pm10: parseFloat(dust_data.response.body.items[0].pm10Value),
-    pm25: parseFloat(dust_data.response.body.items[0].pm25Value),
-  };
-  return data;
+  return datas;
 };
-export const getforecastWeatherDaily = async (latitude, longitude) => {
+export const getForecastWeatherDaily = async (latitude, longitude) => {
   const openweather_datas = await forecastWeatherDaily(latitude, longitude);
   const { sido } = await reverseGeocode(latitude, longitude);
   const sidoName = getDustAddress(sido);
