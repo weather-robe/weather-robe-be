@@ -48,6 +48,7 @@ model Weather {
 
   DailyWeathers  DailyWeather[]
   HourlyWeathers HourlyWeather[]
+  TimeBlocks     TimeBlock[]
 
   @@map("weather")
 }
@@ -75,23 +76,22 @@ model DailyWeather {
   createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
 
-  TimeBlocks  TimeBlock[]
   DailyCloths DailyCloth[]
 
   @@map("daily_weather")
 }
 
 model TimeBlock {
-  id             Int          @id @default(autoincrement())
-  dailyWeather   DailyWeather @relation(fields: [dailyWeatherId], references: [id])
-  dailyWeatherId Int          @db.Int
-  dtype          String       @db.VarChar(20) //기온, 체감온도
-  night          Float        @db.Float
-  morn           Float        @db.Float
-  day            Float        @db.Float
-  eve            Float        @db.Float
-  createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
-  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+  id        Int      @id @default(autoincrement())
+  weather   Weather  @relation(fields: [weatherId], references: [id])
+  weatherId Int      @db.Int
+  dtype     String   @db.VarChar(20) //기온, 체감온도
+  night     Float    @db.Float
+  morn      Float    @db.Float
+  day       Float    @db.Float
+  eve       Float    @db.Float
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
 
   @@map("time_block")
 }
