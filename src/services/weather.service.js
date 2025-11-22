@@ -359,11 +359,21 @@ export const getDailyWeather = async ({ user, latitude, longitude }) => {
     }
     console.log("생성 할 데이터 수:", createData.length);
   }
+  const yesterday_dt = daily_dt - 24 * 60 * 60;
+  const yesterday_weather = await getWeatherBySidoAndDtypeAndDt(
+    sido,
+    DTYPE.FORECAST_DAILY,
+    yesterday_dt
+  );
+  if (!yesterday_weather) {
+    console.log("어제 날씨 DB에 없음");
+  }
   // 최종적으로 사용자 위치 업데이트
   const updatedUser = await patchUserLocation(user.id, current_address.sido);
   return responseFromDailyWeather({
     user: updatedUser,
     weathers: weathers,
     time_blocks: timeblocks,
+    yesterday_weather: yesterday_weather,
   });
 };

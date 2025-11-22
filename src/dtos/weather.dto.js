@@ -76,7 +76,8 @@ export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
     },
     hourly: hourly_weathers.map((weather) => ({
       weatherId: weather.id,
-      datetime: new Date(weather.dt * 1000),
+      date: new Date(weather.dt * 1000).toISOString().split("T")[0],
+      time: new Date(weather.dt * 1000).toISOString().split("T")[1].slice(0, 5),
       temp: weather.temp,
       feels_like: weather.feels_like,
       weather: weather.main,
@@ -91,7 +92,12 @@ export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
   };
 };
 
-export const responseFromDailyWeather = ({ user, weathers, time_blocks }) => {
+export const responseFromDailyWeather = ({
+  user,
+  weathers,
+  time_blocks,
+  yesterday_weather,
+}) => {
   return {
     user: {
       id: user.id,
@@ -108,5 +114,15 @@ export const responseFromDailyWeather = ({ user, weathers, time_blocks }) => {
       },
       pop: weather.pop ? weather.pop : 0,
     })),
+    yesterday: {
+      weatherId: yesterday_weather ? yesterday_weather.id : null,
+      date: yesterday_weather
+        ? new Date(yesterday_weather.dt * 1000).toISOString().split("T")[0]
+        : null,
+      temp: {
+        max: yesterday_weather ? yesterday_weather.temp_max : null,
+        min: yesterday_weather ? yesterday_weather.temp_min : null,
+      },
+    },
   };
 };

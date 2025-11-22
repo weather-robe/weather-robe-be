@@ -244,7 +244,8 @@ export const handleGetHourlyWeather = async (req, res, next) => {
                       type: 'object',
                       properties: {
                         weatherId: { type: 'number', example: 1 },
-                        datetime: { type: 'string', example: '2023-10-01T15:00:00+09:00' },
+                        date: { type: 'string', example: '2023-10-01' },
+                        time: { type: 'string', example: '15:00' },
                         temp: { type: 'number', example: 3.1725 },
                         feels_like: { type: 'number', example: 1.6175 },
                         weather: { type: 'string', example: 'Clouds' },
@@ -317,7 +318,7 @@ export const handleGetDailyWeather = async (req, res, next) => {
                       type: 'object',
                       properties: {
                         weatherId: { type: 'number', example: 1 },
-                        date: { type: 'string', example: '2023-10-01T15:00:00+09:00' },
+                        date: { type: 'string', example: '2023-10-01' },
                         temp: { type: 'object',
                           properties: {
                             max: { type: 'number', example: 7.24 },
