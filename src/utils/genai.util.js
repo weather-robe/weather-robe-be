@@ -1,17 +1,5 @@
 import ai from "../configs/genai.config.js";
-
-export const genaiModels = Object.freeze({
-  GEMINI_1_5_PRO: "gemini-1.5-pro",
-  GEMINI_1_5_FLASH: "gemini-1.5-flash",
-  GEMINI_2_5_FLASH: "gemini-2.5-flash",
-  GEMINI_PRO: "gemini-pro",
-  GEMINI_PRO_VISION: "gemini-pro-vision",
-  GEMINI_PRO_LATEST: "gemini-pro-latest",
-  GEMINI_1_0_PRO: "gemini-1.0-pro",
-  GEMINI_1_0_PRO_VISION: "gemini-1.0-pro-vision",
-  GEMINI_ULTRA: "gemini-ultra",
-  IMAGINE_2: "imagine-2",
-});
+import { genaiModels } from "../models/genai.model.js";
 
 export const genaiClient = async (model, contents) => {
   try {
@@ -20,6 +8,32 @@ export const genaiClient = async (model, contents) => {
       contents: contents,
     });
     return response;
+  } catch (error) {
+    console.error("Error generating content:", error);
+    throw error;
+  }
+};
+
+export const clothingRecommenderConfig = Object.freeze({
+  systemInstruction:
+    "You are an expert weather and clothing consultant. Considering both the apparent temperature and the season, you must ONLY respond with a JSON array containing a maximum of 3 **Korean keywords**.",
+  responseMimeType: "application/json",
+});
+
+export const genaiClothingRecommender = async (
+  temperature,
+  season,
+  model = genaiModels.GEMINI_2_5_FLASH
+) => {
+  const contents = `Extract a maximum of 3 clothing recommendation keywords suitable for the apparent temperature of ${temperature}°C during the ${season} season, and return them as a JSON array.`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: contents,
+      config: clothingRecommenderConfig,
+    });
+    return JSON.parse(response.text);
   } catch (error) {
     console.error("Error generating content:", error);
     throw error;

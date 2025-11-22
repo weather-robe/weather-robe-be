@@ -2,8 +2,9 @@ import { StatusCodes } from "http-status-codes";
 import {
   sendMessageForGenAI,
   sendMessageForOpenAI,
+  getKeywordsFromAI,
 } from "../services/ai.service.js";
-import { bodyToAI } from "../dtos/ai.dto.js";
+import { bodyToAI, requestForWeatherKeyword } from "../dtos/ai.dto.js";
 
 export const handleGenAI = async (req, res, next) => {
   /*
@@ -65,4 +66,13 @@ export const handleOpenAI = async (req, res, next) => {
   } catch (err) {
     return next(err);
   }
+};
+
+export const handleGetKeywords = async (req, res, next) => {
+  const user = req.user;
+  const weather = req.weather;
+  const result = await getKeywordsFromAI(
+    requestForWeatherKeyword(user, weather)
+  );
+  res.status(StatusCodes.OK).success(result);
 };
