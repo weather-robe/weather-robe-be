@@ -113,7 +113,6 @@ model ClothKeyword {
   id           Int        @id @default(autoincrement())
   dailyCloth   DailyCloth @relation(fields: [dailyClothId], references: [id])
   dailyClothId Int        @db.Int
-  type         String     @db.VarChar(20) // 상의, 하의
   keyword      String     @db.VarChar(100)
   createdAt    DateTime   @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
