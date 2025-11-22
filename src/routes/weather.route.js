@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  handleGetDailyWeather,
   handleGetHourlyWeather,
   handleGetWeatherToday,
   handleSetFeedbackWeather,
@@ -9,5 +10,6 @@ const route = express.Router();
 
 route.post("/today", handleGetWeatherToday);
 route.post("/hourly", handleGetHourlyWeather);
+route.post("/daily", handleGetDailyWeather);
 route.post("/:weatherId", verifyWeatherId, handleSetFeedbackWeather);
 export default route;

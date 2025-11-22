@@ -90,3 +90,23 @@ export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
     pm25: hourly_weathers.length > 0 ? hourly_weathers[0].pm25 : null,
   };
 };
+
+export const responseFromDailyWeather = ({ user, weathers, time_blocks }) => {
+  return {
+    user: {
+      id: user.id,
+    },
+    daily: weathers.map((weather, index) => ({
+      weatherId: weather.id,
+      date: new Date(weather.dt * 1000).toISOString().split("T")[0],
+      weather: weather.main,
+      temp: {
+        max: weather.temp_max,
+        min: weather.temp_min,
+        morning: (time_blocks[index].morn + time_blocks[index].night) / 2,
+        afternoon: (time_blocks[index].day + time_blocks[index].eve) / 2,
+      },
+      pop: weather.pop ? weather.pop : 0,
+    })),
+  };
+};

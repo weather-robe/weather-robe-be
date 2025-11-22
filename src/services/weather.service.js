@@ -14,13 +14,25 @@ import {
   getWeathersBySidoAndDtypeAndDtRange,
   patchWeathersIndividually,
   addWeathers,
+  addDailyWeathers,
+  addWeathersAndTimeBlocks,
+  getTimeBlockByWeatherIdAndDtype,
+  getTimeBlocksByWeatherIdsAndDtype,
+  addTimeBlock,
+  patchTimeBlock,
 } from "../repositories/weather.repository.js";
 import {
+  responseFromDailyWeather,
   responseFromDailyWeatherFeedback,
   responseFromHourlyWeather,
   responseFromWeatherToday,
 } from "../dtos/weather.dto.js";
 import { InvalidRequestError } from "../errors/common.error.js";
+
+const DTYPE_TIME_BLOCK = {
+  TEMP: "temp",
+  FEELS_LIKE: "feels_like",
+};
 
 const DTYPE = {
   CURRENT: "current",
@@ -28,7 +40,8 @@ const DTYPE = {
   FORECAST_HOURLY: "forecast_hourly",
 };
 
-const HOURLY = 48;
+const HOURLY = 2 * 24;
+const DAILY = 10;
 
 export const getWeatherToday = async ({ user, latitude, longitude }) => {
   // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
@@ -213,7 +226,9 @@ export const getHourlyWeather = async ({ user, latitude, longitude }) => {
       console.log("업데이트 할 데이터 수:", ids.length);
     }
     if (createData.length > 0) {
-      hourly_weather.push(await addWeathers(createData));
+      for (let i = 0; i < createData.length; i++) {
+        hourly_weather.push(await addWeather(createData[i]));
+      }
       console.log("생성 할 데이터 수:", createData.length);
     }
   }
@@ -222,5 +237,133 @@ export const getHourlyWeather = async ({ user, latitude, longitude }) => {
   return responseFromHourlyWeather({
     user: updatedUser,
     hourly_weathers: hourly_weather,
+  });
+};
+
+export const getDailyWeather = async ({ user, latitude, longitude }) => {
+  // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
+  if (!latitude || !longitude) {
+    //return null; //throw new Error("위도와 경도가 필요합니다.");
+    latitude = 37.5665;
+    longitude = 126.978;
+  }
+  const current_address = await reverseGeocode(latitude, longitude);
+  let sido = user.location;
+  // 유저가 제공한 위치가 없으면 현재 위치를 서울로 설정
+  if (!sido) {
+    sido = "서울특별시";
+  }
+
+  const { latitude: newLatitude, longitude: newLongitude } = await geocode(
+    sido
+  );
+
+  const daily_date = new Date();
+  daily_date.setHours(0, 0, 0, 0);
+  const daily_dt = daily_date.getTime() / 1000 + 9 * 60 * 60;
+  const ten_days_later_dt = daily_dt + DAILY * 24 * 60 * 60;
+  let weathers =
+    (await getWeathersBySidoAndDtypeAndDtRange(
+      sido,
+      DTYPE.FORECAST_DAILY,
+      daily_dt,
+      ten_days_later_dt
+    )) || [];
+  const weather_ids = weathers.map((weather) => weather.id);
+  let timeblocks =
+    (await getTimeBlocksByWeatherIdsAndDtype(
+      weather_ids,
+      DTYPE_TIME_BLOCK.TEMP
+    )) || [];
+  console.log("DB에 있는 10일 날씨 데이터 수:", weathers.length);
+  if (weathers.length < DAILY) {
+    console.log("현재 기준 모레 날씨 DB에 없음, 새로 추가 및 업데이트");
+    const { items, pm10, pm25 } = await getForecastWeatherDaily(
+      newLatitude,
+      newLongitude
+    );
+    const ids = [];
+    const updateData = [];
+    const updateTimeBlockData = [];
+    const createData = [];
+    const createTimeBlockData = [];
+    for (let i = 0; i < items.length; i++) {
+      const temp_avg =
+        (items[i].temp.day +
+          items[i].temp.night +
+          items[i].temp.eve +
+          items[i].temp.morn) /
+        4;
+      const feels_like_avg =
+        (items[i].feels_like.day +
+          items[i].feels_like.night +
+          items[i].feels_like.eve +
+          items[i].feels_like.morn) /
+        4;
+      const newWeather = {
+        ...items[i],
+        temp: temp_avg,
+        temp_max: items[i].temp.max,
+        temp_min: items[i].temp.min,
+        feels_like: feels_like_avg,
+        sido: sido,
+        dtype: DTYPE.FORECAST_DAILY,
+        pm10: pm10,
+        pm25: pm25,
+      };
+      const newTimeBock = {
+        weatherId: null, // 나중에 추가
+        dtype: DTYPE_TIME_BLOCK.TEMP,
+        night: items[i].temp.night,
+        morn: items[i].temp.morn,
+        day: items[i].temp.day,
+        eve: items[i].temp.eve,
+      };
+      if (i < weathers.length) {
+        ids.push(weathers[i].id);
+        updateData.push(newWeather);
+        updateTimeBlockData.push({ ...newTimeBock, weatherId: weathers[i].id });
+      } else {
+        createData.push(newWeather);
+        createTimeBlockData.push(newTimeBock);
+      }
+    }
+    if (ids.length > 0) {
+      weathers.push(await patchWeathersIndividually(ids, updateData));
+      for (let i = 0; i < ids.length; i++) {
+        const timeblock = await getTimeBlockByWeatherIdAndDtype(
+          ids[i],
+          DTYPE_TIME_BLOCK.TEMP
+        );
+        timeblocks.push(
+          await patchTimeBlock(timeblock.id, updateTimeBlockData[i])
+        );
+        const dailyWeather = await getDailyWeatherByUserIdAndWeatherId(
+          user.id,
+          ids[i]
+        );
+        await patchDailyWeather(dailyWeather.id, { weatherId: ids[i] });
+      }
+      console.log("업데이트 할 데이터 수:", ids.length);
+    }
+    if (createData.length > 0) {
+      for (let i = 0; i < createTimeBlockData.length; i++) {
+        const ws = (await addDailyWeather(user.id, createData[i])).weather;
+        const ts = await addTimeBlock({
+          ...createTimeBlockData[i],
+          weatherId: ws.id,
+        });
+        weathers.push(ws);
+        timeblocks.push(ts);
+      }
+    }
+    console.log("생성 할 데이터 수:", createData.length);
+  }
+  // 최종적으로 사용자 위치 업데이트
+  const updatedUser = await patchUserLocation(user.id, current_address.sido);
+  return responseFromDailyWeather({
+    user: updatedUser,
+    weathers: weathers,
+    time_blocks: timeblocks,
   });
 };

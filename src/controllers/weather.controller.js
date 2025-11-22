@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import {
+  getDailyWeather,
   getHourlyWeather,
   getWeatherToday,
   setFeedbackWeather,
@@ -268,6 +269,78 @@ export const handleGetHourlyWeather = async (req, res, next) => {
   const user = req.user;
   const { latitude, longitude } = req.body;
   const result = await getHourlyWeather(
+    requestForWeatherLocation(user, latitude, longitude)
+  );
+  res.status(StatusCodes.OK).success(result);
+};
+
+export const handleGetDailyWeather = async (req, res, next) => {
+  /*
+    #swagger.tags = ['Weather']
+    #swagger.summary = '일자별 일기예보'
+    #swagger.description = '10알 온도 정보를 가져옵니다.'
+    #swagger.requestBody = {
+      required: false,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              latitude: { type: 'number', example: 37.5665 },
+              longitude: { type: 'number', example: 126.978 }
+            }
+          }
+        }
+      }
+    }
+    #swagger.responses[200] = {
+      description: '날짜별 일기예보 조회 성공',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              resultType: { type: 'string', example: 'SUCCESS' },
+              error: { type: 'object', example: null },
+              success: {
+                type: 'object',
+                properties: {
+                  user: {
+                    type: 'object',
+                    properties: {
+                      userId: { type: 'number', example: 1 }
+                    }
+                  },
+                  daily: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        weatherId: { type: 'number', example: 1 },
+                        date: { type: 'string', example: '2023-10-01T15:00:00+09:00' },
+                        temp: { type: 'object',
+                          properties: {
+                            max: { type: 'number', example: 7.24 },
+                            min: { type: 'number', example: -1.49 },
+                            morning: { type: 'number', example: 2.34 },
+                            afternoon: { type: 'number', example: 5.67 }
+                          }
+                        },
+                        pop: { type: 'number', example: 0 },
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  */
+  const user = req.user;
+  const { latitude, longitude } = req.body;
+  const result = await getDailyWeather(
     requestForWeatherLocation(user, latitude, longitude)
   );
   res.status(StatusCodes.OK).success(result);
