@@ -3,8 +3,9 @@ import {
   getFormattedToday,
   getFormattedTime,
   getFormattedYesterday,
-} from "./date.util.js";
+} from "../utils/date.util.js";
 
+// 미세먼지 및 초미세먼지 조회 API
 export const currentAirPollution = async (
   sidoName,
   numberOfRows = 100,
@@ -36,9 +37,10 @@ export const forecastUltrafineDust = async (
   }
 };
 
+// 강수확률 조회 API - 사용 안 할 수도 있음
 export const currentUltraSrtPop = async (
-  nx = 55,
-  ny = 127,
+  nx = 37.5674,
+  ny = 126.9755,
   base_date = parseInt(getFormattedTime(new Date())) < 600
     ? getFormattedYesterday()
     : getFormattedToday(),
@@ -50,7 +52,6 @@ export const currentUltraSrtPop = async (
   try {
     const url = `${process.env.DEFAULT_POP_URL}/getUltraSrtNcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
     const response = await axios.get(url);
-    console.log(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching ultra short-term POP:", error);
@@ -58,8 +59,8 @@ export const currentUltraSrtPop = async (
 };
 
 export const forecastUltraSrtPop = async (
-  nx = 55,
-  ny = 127,
+  nx = 37.5674,
+  ny = 126.9755,
   base_date = parseInt(getFormattedTime(new Date())) < 600
     ? getFormattedYesterday()
     : getFormattedToday(),
@@ -71,7 +72,6 @@ export const forecastUltraSrtPop = async (
   try {
     const url = `${process.env.DEFAULT_POP_URL}/getUltraSrtFcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
     const response = await axios.get(url);
-    console.log(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching ultra short-term POP forecast:", error);
@@ -79,8 +79,8 @@ export const forecastUltraSrtPop = async (
 };
 
 export const forecastSrtPop = async (
-  nx = 55,
-  ny = 127,
+  nx = 37.5674,
+  ny = 126.9755,
   base_date = parseInt(getFormattedTime(new Date())) < 600
     ? getFormattedYesterday()
     : getFormattedToday(),
@@ -92,7 +92,6 @@ export const forecastSrtPop = async (
   try {
     const url = `${process.env.DEFAULT_POP_URL}/getVilageFcst?serviceKey=${process.env.DATA_API_KEY}&pageNo=${pageNo}&numOfRows=${numOfRows}&dataType=${dataType}&base_date=${base_date}&base_time=${base_time}&nx=${nx}&ny=${ny}`;
     const response = await axios.get(url);
-    console.log(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching short-term POP forecast:", error);

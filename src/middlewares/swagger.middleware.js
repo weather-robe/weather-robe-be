@@ -16,7 +16,11 @@ export const swaggerHandler = async (req, res, next) => {
       title: "제목",
       description: "설명",
     },
-    host: `${protocol}://${host}`,
+    servers: [
+      {
+        url: `${protocol}://${host}`,
+      },
+    ],
     // components: {
     //   securitySchemes: {
     //     bearerAuth: {

@@ -1,3 +1,4 @@
+// id 값 일단 bigint 말고 int로 설정해놓음 나중에 변경 가능
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,14 +9,125 @@ datasource db {
 }
 
 model User {
+  id                  Int       @id @default(autoincrement())
+  email               String    @unique(map: "email") @db.VarChar(100)
+  name                String    @db.VarChar(50)
+  password            String    @db.VarChar(255)
+  weather_correlation Float?    @default(0.0) @db.Float
+  location            String?   @db.VarChar(100)
+  locationTimeAt      DateTime? @map("location_time_at") @db.DateTime(6)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  DailyWeathers  DailyWeather[]
+  HourlyWeathers HourlyWeather[]
+
+  @@map("user")
+}
+
+model Weather {
+  id         Int      @id @default(autoincrement())
+  dtype      String   @db.VarChar(20) // current, forecast_daily, forecast_hourly
+  dt         Int      @db.Int
+  sido       String   @db.VarChar(100)
+  main       String   @db.VarChar(20)
+  temp       Float    @db.Float
+  temp_max   Float    @db.Float
+  temp_min   Float    @db.Float
+  feels_like Float    @db.Float
+  humidity   Int      @db.Int
+  pop        Float?   @db.Float
+  rain       Float?   @db.Float
+  snow       Float?   @db.Float
+  wind_speed Float    @db.Float
+  wind_deg   Int      @db.Int
+  pm10       Float?   @db.Float
+  pm25       Float?   @db.Float
+  createdAt  DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  DailyWeathers  DailyWeather[]
+  HourlyWeathers HourlyWeather[]
+  TimeBlocks     TimeBlock[]
+
+  @@map("weather")
+}
+
+// 미사용 예정
+model HourlyWeather {
   id        Int      @id @default(autoincrement())
-  email     String   @unique(map: "email") @db.VarChar(255)
-  name      String   @db.VarChar(255)
-  //username  String   @unique @db.VarChar(255)
-  password  String   @db.VarChar(255)
-  //avatar    String?  @db.VarChar(255)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @db.Int
+  weather   Weather  @relation(fields: [weatherId], references: [id])
+  weatherId Int      @db.Int
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
 
-  @@map("user")
+  @@map("hourly_weather")
+}
+
+model DailyWeather {
+  id             Int      @id @default(autoincrement())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int      @db.Int
+  weather        Weather  @relation(fields: [weatherId], references: [id])
+  weatherId      Int      @db.Int
+  feeling_status String?  @db.VarChar(20) // 적당, 추움, 더움
+  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  DailyCloths DailyCloth[]
+
+  @@map("daily_weather")
+}
+
+model TimeBlock {
+  id        Int      @id @default(autoincrement())
+  weather   Weather  @relation(fields: [weatherId], references: [id])
+  weatherId Int      @db.Int
+  dtype     String   @db.VarChar(20) //기온, 체감온도
+  night     Float    @db.Float
+  morn      Float    @db.Float
+  day       Float    @db.Float
+  eve       Float    @db.Float
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  @@map("time_block")
+}
+
+model DailyCloth {
+  id             Int          @id @default(autoincrement())
+  dailyWeather   DailyWeather @relation(fields: [dailyWeatherId], references: [id])
+  dailyWeatherId Int          @db.Int
+  createdAt      DateTime     @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  ClothKeywords ClothKeyword[]
+  ClothImages   ClothImage[]
+
+  @@map("daily_cloth")
+}
+
+model ClothKeyword {
+  id           Int        @id @default(autoincrement())
+  dailyCloth   DailyCloth @relation(fields: [dailyClothId], references: [id])
+  dailyClothId Int        @db.Int
+  type         String     @db.VarChar(20) // 상의, 하의
+  keyword      String     @db.VarChar(100)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  @@map("cloth_keyword")
+}
+
+model ClothImage {
+  id           Int        @id @default(autoincrement())
+  dailyCloth   DailyCloth @relation(fields: [dailyClothId], references: [id])
+  dailyClothId Int        @db.Int
+  imageUrl     String     @db.VarChar(255)
+  createdAt    DateTime   @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+
+  @@map("cloth_image")
 }

@@ -27,3 +27,40 @@ export const getFormattedTime = (date, type = "none") => {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   return type === "none" ? `${hours}${minutes}` : `${hours}:${minutes}`;
 };
+
+export const dtToDateTime = (dt) => {
+  const date = new Date(parseInt(dt) * 1000);
+  return date;
+};
+
+export const dateTimeToDt = (date) => {
+  const dt = Math.floor(date.getTime() / 1000);
+  return dt;
+};
+
+export const spliceMinutesFromDateTime = (date) => {
+  date.setMinutes(0, 0, 0);
+  return date.getTime();
+};
+
+export const spliceMinutesFromDt = (dt) => {
+  const date = new Date(dt);
+  date.setMinutes(0, 0, 0);
+  return dateTimeToDt(date);
+};
+
+export const spliceHoursFromDateTime = (date) => {
+  date.setHours(0, 0, 0, 0);
+  return dateTimeToDt(date);
+};
+
+export const spliceHoursFromDt = (dt) => {
+  const date = new Date(dt);
+  date.setHours(0, 0, 0, 0);
+  return dateTimeToDt(date);
+};
+
+export const timeDiffInHours = (startTime, endTime) => {
+  const diffInMs = endTime - startTime;
+  return diffInMs / (1000 * 60 * 60);
+};
