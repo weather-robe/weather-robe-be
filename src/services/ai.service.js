@@ -40,48 +40,42 @@ const season = (() => {
 })();
 
 export const getKeywordsFromAI = async ({ user, weather }) => {
-  const daily = await getDailyWeatherByUserIdAndWeatherId(
+  const dailyWeather = await getDailyWeatherByUserIdAndWeatherId(
     user.userId,
     weather.id
   );
-  if (daily) {
-    let dailyCloth = await getDailyClothByDailyId(daily.id);
-
-    if (dailyCloth.length === 0) {
-      {
-        const feels_like_user =
-          weather.feels_like +
-          (user.weather_correction ? user.weather_correction : 0);
-        const keywords = await genaiClothingRecommender(
-          feels_like_user,
-          season
-        );
-        await addDailyCloth(daily.id, keywords);
-        dailyCloth = await getDailyClothByDailyId(daily.id);
-      }
-    }
-    return responseFromKeywords({ user, dailyCloths: dailyCloth });
+  if (!dailyWeather) {
+    throw new InvalidRequestError("오늘 날씨 값을 찾을 수 없습니다.");
   }
+  let dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
+
+  if (dailyCloth.length === 0) {
+    const feels_like_user =
+      weather.feels_like +
+      (user.weather_correction ? user.weather_correction : 0);
+    const keywords = await genaiClothingRecommender(feels_like_user, season);
+    await addDailyCloth(dailyWeather.id, keywords);
+    dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
+  }
+  return responseFromKeywords({ user, dailyCloths: dailyCloth });
 };
 
 export const getKeywordImagesFromAI = async ({ user, weather }) => {
-  const daily = await getDailyWeatherByUserIdAndWeatherId(
+  const dailyWeather = await getDailyWeatherByUserIdAndWeatherId(
     user.userId,
     weather.id
   );
-  if (!daily) {
-    throw new Error("daily 없음");
+  if (!dailyWeather) {
+    throw new InvalidRequestError("오늘 날씨 값을 찾을 수 없습니다.");
   }
-  let dailyCloth = await getDailyClothByDailyId(daily.id);
+  let dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
   if (dailyCloth.length === 0) {
-    {
-      const feels_like_user =
-        weather.feels_like +
-        (user.weather_correction ? user.weather_correction : 0);
-      const keywords = await genaiClothingRecommender(feels_like_user, season);
-      await addDailyCloth(daily.id, keywords);
-      dailyCloth = await getDailyClothByDailyId(daily.id);
-    }
+    const feels_like_user =
+      weather.feels_like +
+      (user.weather_correction ? user.weather_correction : 0);
+    const keywords = await genaiClothingRecommender(feels_like_user, season);
+    await addDailyCloth(dailyWeather.id, keywords);
+    dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
   }
   const keywords = dailyCloth[0].ClothKeywords.map((cloth) => cloth.keyword);
   // const imagePromises = [
@@ -93,14 +87,13 @@ export const getKeywordImagesFromAI = async ({ user, weather }) => {
 
   // const imageResponses = await Promise.all(imagePromises);
 
-  const imageUrls = ["1", "2", "3", "4"]; // 실제로는 imageResponses의 데이터를 S3에 저장 후 URL을 받아와야 합니다.
+  const imageUrls = ["mock1", "mock2", "mock3", "mock4"]; // 실제로는 imageResponses의 데이터를 S3에 저장 후 URL을 받아와야 합니다.
   let dailyImages = await getDailyClothImagesByDailyClothId(dailyCloth[0].id);
   if (dailyImages.length === 0) {
     dailyImages = await addDailyClothImages(dailyCloth[0].id, imageUrls);
   }
   return responseFromKeywordImages({
     user,
-    dailyCloth: dailyCloth[0],
     images: dailyImages,
   });
 };

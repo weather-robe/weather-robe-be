@@ -13,11 +13,7 @@ const route = express.Router();
 
 //route.post("/genai", verifyAccessToken, handleGenAI);
 //route.post("/openai", verifyAccessToken, handleOpenAI);
-route.post("/weather/:weatherId/keyword", verifyWeatherId, handleGetKeywords);
-route.post(
-  "/weather/:weatherId/image",
-  verifyWeatherId,
-  handleGetKeywordImages
-);
+route.post("/:weatherId/keyword", verifyWeatherId, handleGetKeywords);
+route.post("/:weatherId/image", verifyWeatherId, handleGetKeywordImages);
 
 export default route;

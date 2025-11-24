@@ -20,16 +20,18 @@ export const requestForWeatherKeyword = (user, weather) => {
 
 export const responseFromKeywords = ({ user, dailyCloths }) => {
   return {
-    userId: user.id,
-    dailyClothId: dailyCloths[0].id,
+    user: {
+      userId: user.id,
+    },
     keywords: dailyCloths[0].ClothKeywords.map((cloth) => cloth.keyword),
   };
 };
 
-export const responseFromKeywordImages = ({ user, dailyCloth, images }) => {
+export const responseFromKeywordImages = ({ user, images }) => {
   return {
-    userId: user.id,
-    dailyClothId: dailyCloth.id,
+    user: {
+      userId: user.id,
+    },
     images: images.map((img) => img.imageUrl),
   };
 };
