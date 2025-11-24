@@ -110,9 +110,12 @@ export const genaiClothingRecommenderImage = async (
     const imageData = part.inlineData.data;
     const buffer = Buffer.from(imageData, "base64");
 
-    fs.writeFileSync(`gemini-native-image-${new Date().getTime()}.png`, buffer);
+    fs.writeFileSync(
+      `gemini-native-image-${index}-${new Date().getTime()}.png`,
+      buffer
+    );
     console.log(
-      `Image saved as gemini-native-image-${new Date().getTime()}.png`
+      `Image saved as gemini-native-image-${index}-${new Date().getTime()}.png`
     );
   } else if (response.text) {
     console.log(

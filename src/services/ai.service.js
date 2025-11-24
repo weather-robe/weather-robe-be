@@ -1,17 +1,20 @@
-import { responseFromAI, responseFromKeywords } from "../dtos/ai.dto.js";
+import {
+  responseFromAI,
+  responseFromKeywordImages,
+  responseFromKeywords,
+} from "../dtos/ai.dto.js";
 import { getDailyWeatherByUserIdAndWeatherId } from "../repositories/weather.repository.js";
 import {
   genaiClient,
   genaiClothingRecommender,
   genaiClothingRecommenderImage,
-  genaiImageClient,
-  getGenaiModels,
 } from "../utils/genai.util.js";
 import { openaiClient, openaiModels } from "../utils/openai.util.js";
 import {
   getDailyClothByDailyId,
   addDailyCloth,
   addDailyClothImages,
+  getDailyClothImagesByDailyClothId,
 } from "../repositories/dailyCloth.repository.js";
 import { genaiModels } from "../models/genai.model.js";
 import { saveGeneratedImages } from "../utils/image.util.js";
@@ -81,20 +84,23 @@ export const getKeywordImagesFromAI = async ({ user, weather }) => {
     }
   }
   const keywords = dailyCloth[0].ClothKeywords.map((cloth) => cloth.keyword);
-  const imagePromises = [
-    // 1. 남성 (index 0)
-    genaiClothingRecommenderImage(keywords, "male"),
-    // 2. 여성 (index 1)
-    genaiClothingRecommenderImage(keywords, "female"),
-    // 3. 남성 (index 2)
-    genaiClothingRecommenderImage(keywords, "male"),
-    // 4. 여성 (index 3)
-    genaiClothingRecommenderImage(keywords, "female"),
-  ];
+  // const imagePromises = [
+  //   genaiClothingRecommenderImage(keywords, "male", 0),
+  //   genaiClothingRecommenderImage(keywords, "female", 1),
+  //   genaiClothingRecommenderImage(keywords, "male", 2),
+  //   genaiClothingRecommenderImage(keywords, "female", 3),
+  // ];
 
-  const imageResponses = await Promise.all(imagePromises);
+  // const imageResponses = await Promise.all(imagePromises);
 
   const imageUrls = ["1", "2", "3", "4"]; // 실제로는 imageResponses의 데이터를 S3에 저장 후 URL을 받아와야 합니다.
-  const dailyImages = await addDailyClothImages(daily.id, imageUrls);
-  return dailyImages;
+  let dailyImages = await getDailyClothImagesByDailyClothId(dailyCloth[0].id);
+  if (dailyImages.length === 0) {
+    dailyImages = await addDailyClothImages(dailyCloth[0].id, imageUrls);
+  }
+  return responseFromKeywordImages({
+    user,
+    dailyCloth: dailyCloth[0],
+    images: dailyImages,
+  });
 };

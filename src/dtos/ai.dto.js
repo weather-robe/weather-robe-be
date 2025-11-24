@@ -25,3 +25,11 @@ export const responseFromKeywords = ({ user, dailyCloths }) => {
     keywords: dailyCloths[0].ClothKeywords.map((cloth) => cloth.keyword),
   };
 };
+
+export const responseFromKeywordImages = ({ user, dailyCloth, images }) => {
+  return {
+    userId: user.id,
+    dailyClothId: dailyCloth.id,
+    images: images.map((img) => img.imageUrl),
+  };
+};

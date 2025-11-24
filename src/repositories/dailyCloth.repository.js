@@ -23,6 +23,15 @@ export const getDailyClothByDailyId = async (dailyWeatherId) => {
   return dailyCloth;
 };
 
+export const getDailyClothImagesByDailyClothId = async (dailyClothId) => {
+  const clothImages = await prisma.clothImage.findMany({
+    where: {
+      dailyClothId: dailyClothId,
+    },
+  });
+  return clothImages;
+};
+
 export const addDailyCloth = async (dailyWeatherId, clothKeywords) => {
   const createdDailyCloth = await prisma.dailyCloth.create({
     data: {
@@ -40,18 +49,16 @@ export const addDailyCloth = async (dailyWeatherId, clothKeywords) => {
   return createdDailyCloth;
 };
 
-export const addDailyClothImages = async (dailyWeatherId, imageUrls) => {
-  for (const imageUrl of imageUrls) {
-    await prisma.clothImage.create({
-      data: {
-        dailyWeatherId: dailyWeatherId,
-        imageUrl: imageUrl,
-      },
-    });
-  }
+export const addDailyClothImages = async (dailyClothId, imageUrls) => {
+  await prisma.clothImage.createMany({
+    data: imageUrls.map((url) => ({
+      dailyClothId: dailyClothId,
+      imageUrl: url,
+    })),
+  });
   return await prisma.clothImage.findMany({
     where: {
-      dailyWeatherId: dailyWeatherId,
+      dailyClothId: dailyClothId,
     },
   });
 };
