@@ -1,6 +1,6 @@
 import { prisma } from "../configs/db.config.js";
-export const getDailyClouthByDailyId = async (dailyWeatherId) => {
-  const dailyClouth = await prisma.dailyCloth.findMany({
+export const getDailyClothByDailyId = async (dailyWeatherId) => {
+  const dailyCloth = await prisma.dailyCloth.findMany({
     select: {
       id: true,
       dailyWeatherId: true,
@@ -20,7 +20,7 @@ export const getDailyClouthByDailyId = async (dailyWeatherId) => {
       dailyWeatherId: dailyWeatherId,
     },
   });
-  return dailyClouth;
+  return dailyCloth;
 };
 
 export const addDailyCloth = async (dailyWeatherId, clothKeywords) => {
@@ -38,4 +38,20 @@ export const addDailyCloth = async (dailyWeatherId, clothKeywords) => {
     },
   });
   return createdDailyCloth;
+};
+
+export const addDailyClothImages = async (dailyWeatherId, imageUrls) => {
+  for (const imageUrl of imageUrls) {
+    await prisma.clothImage.create({
+      data: {
+        dailyWeatherId: dailyWeatherId,
+        imageUrl: imageUrl,
+      },
+    });
+  }
+  return await prisma.clothImage.findMany({
+    where: {
+      dailyWeatherId: dailyWeatherId,
+    },
+  });
 };

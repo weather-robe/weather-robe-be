@@ -3,6 +3,7 @@ import {
   sendMessageForGenAI,
   sendMessageForOpenAI,
   getKeywordsFromAI,
+  getKeywordImagesFromAI,
 } from "../services/ai.service.js";
 import { bodyToAI, requestForWeatherKeyword } from "../dtos/ai.dto.js";
 
@@ -72,6 +73,15 @@ export const handleGetKeywords = async (req, res, next) => {
   const user = req.user;
   const weather = req.weather;
   const result = await getKeywordsFromAI(
+    requestForWeatherKeyword(user, weather)
+  );
+  res.status(StatusCodes.OK).success(result);
+};
+
+export const handleGetKeywordImages = async (req, res, next) => {
+  const user = req.user;
+  const weather = req.weather;
+  const result = await getKeywordImagesFromAI(
     requestForWeatherKeyword(user, weather)
   );
   res.status(StatusCodes.OK).success(result);

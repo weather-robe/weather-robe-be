@@ -2,6 +2,8 @@ export const genaiModels = Object.freeze({
   GEMINI_1_5_PRO: "gemini-1.5-pro",
   GEMINI_1_5_FLASH: "gemini-1.5-flash",
   GEMINI_2_5_FLASH: "gemini-2.5-flash",
+  GEMINI_2_5_FLASH_IMAGE: "gemini-2.5-flash-image",
+  GEMINI_2_5_FLASH_PREVIEW_IMAGE: "gemini-2.5-flash-image-preview",
   GEMINI_PRO: "gemini-pro",
   GEMINI_PRO_VISION: "gemini-pro-vision",
   GEMINI_PRO_LATEST: "gemini-pro-latest",
