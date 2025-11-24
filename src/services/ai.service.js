@@ -44,7 +44,8 @@ export const getKeywordsFromAI = async ({ user, weather }) => {
           feels_like_user,
           season
         );
-        dailyCloth = await addDailyCloth(daily.id, keywords);
+        await addDailyCloth(daily.id, keywords);
+        dailyCloth = await getDailyClouthByDailyId(daily.id);
       }
     }
     return responseFromKeywords({ user, dailyCloths: dailyCloth });
