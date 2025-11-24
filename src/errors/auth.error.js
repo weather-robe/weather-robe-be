@@ -42,6 +42,17 @@ export class DuplicateEmailError extends Error {
   }
 }
 
+export class DuplicateLoginIdError extends Error {
+  errorCode = "duplicate_login_id";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+    this.statusCode = 409;
+  }
+}
+
 export class ExpirationAccessTokenError extends Error {
   errorCode = "expired_access_token";
 

@@ -1,7 +1,10 @@
 import { responseFromUser } from "../dtos/user.dto.js";
 import { addUser, getUser } from "../repositories/user.repository.js";
 import { getUserSignIn } from "../repositories/auth.repository.js";
-import { DuplicateEmailError } from "../errors/auth.error.js";
+import {
+  DuplicateEmailError,
+  DuplicateLoginIdError,
+} from "../errors/auth.error.js";
 import { responseFromAuth } from "../dtos/auth.dto.js";
 import { createHashedString } from "../utils/crypto.util.js";
 import { InvalidRequestError } from "../errors/common.error.js";
@@ -9,14 +12,16 @@ import { InvalidRequestError } from "../errors/common.error.js";
 export const signUp = async (data) => {
   const hashedPassword = createHashedString(data.password);
   const userId = await addUser({
+    loginId: data.loginId,
     email: data.email,
     name: data.name,
-    // username: data.username,
-    // avatar: data.avatar || null,
     password: hashedPassword,
   });
 
-  if (userId === null) {
+  if (userId.loginId === null) {
+    throw new DuplicateLoginIdError("이미 존재하는 아이디입니다.", data);
+  }
+  if (userId.email === null) {
     throw new DuplicateEmailError("이미 존재하는 이메일입니다.", data);
   }
 
@@ -29,7 +34,7 @@ export const signUp = async (data) => {
 export const signIn = async (data) => {
   const hashedPassword = createHashedString(data.password);
   const user = await getUserSignIn({
-    email: data.email,
+    loginId: data.loginId,
   });
 
   if (user === null || user.password !== hashedPassword) {

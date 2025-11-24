@@ -10,6 +10,7 @@ datasource db {
 
 model User {
   id                  Int       @id @default(autoincrement())
+  loginId             String    @unique(map: "login_id") @map("login_id") @db.VarChar(50)
   email               String    @unique(map: "email") @db.VarChar(100)
   name                String    @db.VarChar(50)
   password            String    @db.VarChar(255)

@@ -6,7 +6,7 @@ export const handleSignUp = async (req, res, next) => {
   /*
   #swagger.tags = ['Auth']
     #swagger.summary = '회원가입'
-    #swagger.description = '회원가입을 위한 API입니다. 이메일, 이름, 비밀번호를 포함해 요청해야 합니다.'
+    #swagger.description = '회원가입을 위한 API입니다. 이메일, 이름, 아이디, 비밀번호를 포함해 요청해야 합니다.'
     #swagger.security = []
     #swagger.requestBody = {
       required: true,
@@ -15,11 +15,10 @@ export const handleSignUp = async (req, res, next) => {
           schema: {
             type: 'object',
             properties: {
+              loginId: { type: 'string', example: 'username' },
               email: { type: 'string', example: 'email@email.com' },
               name: { type: 'string', example: '이름' },
-              // username: { type: 'string', example: 'username' },
               password: { type: 'string', example: '비밀번호' },
-              // avatar: { type: 'string', example: 'avatar.png' },
             },
             required: ['email', 'name', 'password']
           }
@@ -40,10 +39,9 @@ export const handleSignUp = async (req, res, next) => {
                 type: 'object',
                 properties: {
                   userId: { type: 'number', example: 1 },
+                  loginId: { type: 'string', example: 'username' },
                   email: { type: 'string', example: 'email@email.com' },
                   name: { type: 'string', example: '이름' },
-                  // username: { type: 'string', example: 'username' },
-                  // avatar: { type: 'string', example: 'avatar.png' },
                   createdAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' },
                   updatedAt: { type: 'string', example: '2023-01-01T00:00:00.000Z' },
                 }
@@ -55,7 +53,7 @@ export const handleSignUp = async (req, res, next) => {
     }
 
     #swagger.responses[409] = {
-      description: '이메일 중복',
+      description: '아이디 또는 이메일 중복',
       content: {
         'application/json': {
           schema: {
@@ -66,7 +64,7 @@ export const handleSignUp = async (req, res, next) => {
                 type: 'object',
                 properties: {
                   errorCode: { type: 'string', example: 'duplicate_email' },
-                  reason: { type: 'string', example: '이미 존재하는 이메일입니다.' },
+                  reason: { type: 'string', example: '이미 존재하는 아이디 또는 이메일입니다.' },
                   data: { type: 'object', example: null }
                 }
               },
@@ -103,6 +101,7 @@ export const handleSignUp = async (req, res, next) => {
   const auth = await signUp(bodyToSignUp(req.body));
   res.status(StatusCodes.OK).success(auth);
 };
+
 export const handleSignIn = async (req, res, next) => {
   /*
     #swagger.tags = ['Auth']
@@ -116,7 +115,7 @@ export const handleSignIn = async (req, res, next) => {
           schema: {
             type: 'object',
             properties: {
-              email: { type: 'string', example: 'email@email.com' },
+              loginId: { type: 'string', example: 'username' },
               password: { type: 'string', example: '비밀번호' },
             },
             required: ['email', 'password']
