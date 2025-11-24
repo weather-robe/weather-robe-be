@@ -31,8 +31,8 @@ export class NotRefreshTokenError extends Error {
   }
 }
 
-export class DuplicateEmailError extends Error {
-  errorCode = "duplicate_email";
+export class DuplicateError extends Error {
+  errorCode = "duplicate_resource";
 
   constructor(reason, data) {
     super(reason);

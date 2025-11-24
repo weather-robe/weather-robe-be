@@ -1,15 +1,14 @@
 export const bodyToSignUp = (body) => {
   return {
+    loginId: body.loginId,
     name: body.name,
-    //username: body.username,
     email: body.email,
     password: body.password,
-    //avatar: body.avatar || null,
   };
 };
 export const bodyToSignIn = (body) => {
   return {
-    email: body.email,
+    loginId: body.loginId,
     password: body.password,
   };
 };

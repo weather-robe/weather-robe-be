@@ -1,10 +1,20 @@
+export const requestForUpdateUser = ({ user, body }) => {
+  return {
+    user,
+    updateData: {
+      name: body.name,
+      email: body.email,
+      password: body.password,
+    },
+  };
+};
+
 export const responseFromUser = ({ user }) => {
   return {
     userId: user.id,
-    name: user.name,
-    username: user.username,
+    loginId: user.loginId,
     email: user.email,
-    refreshToken: user.refreshToken,
+    name: user.name,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
