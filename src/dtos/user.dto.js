@@ -1,10 +1,11 @@
-export const requestForUpdateUser = ({ user, body }) => {
+import { createHashedString } from "../utils/crypto.util.js";
+
+export const requestForUpdateUser = (user, body) => {
   return {
     user,
     updateData: {
       name: body.name,
-      email: body.email,
-      password: body.password,
+      password: createHashedString(body.password),
     },
   };
 };

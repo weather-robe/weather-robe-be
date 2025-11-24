@@ -1,5 +1,5 @@
 import { responseFromUser } from "../dtos/user.dto.js";
-import { getUser } from "../repositories/user.repository.js";
+import { getUser, updateUser } from "../repositories/user.repository.js";
 
 export const userProfile = async (userId) => {
   const user = await getUser(userId);
@@ -8,5 +8,12 @@ export const userProfile = async (userId) => {
   }
   return responseFromUser({
     user,
+  });
+};
+
+export const updateUserProfile = async ({ user, updateData }) => {
+  const updatedUser = await updateUser(user.id, updateData);
+  return responseFromUser({
+    user: updatedUser,
   });
 };

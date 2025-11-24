@@ -31,3 +31,11 @@ export const patchUserLocation = async (userId, location) => {
   });
   return updated;
 };
+
+export const updateUser = async (userId, updateData) => {
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+  });
+  return updatedUser;
+};
