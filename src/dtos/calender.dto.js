@@ -11,7 +11,7 @@ export const requestForCalender = (userId, startDate, endDate) => {
 export const requestForCalenderDetail = (userId, date) => {
   return {
     userId,
-    date,
+    date: dateTimeToDt(new Date(date)),
   };
 };
 
@@ -32,5 +32,30 @@ export const responseFromCalendar = ({ weathers }) => {
   }));
   return {
     weathers: weather,
+  };
+};
+
+export const responseFromCalendarDetail = ({ weather }) => {
+  if (!weather) {
+    return {
+      weather: null,
+    };
+  }
+  const detailedWeather = {
+    date: dtToDateTime(weather.dt).toISOString().split("T")[0],
+    weather: weather.main,
+    temp_max: weather.temp_max,
+    temp_min: weather.temp_min,
+    feeling_status: weather.DailyWeathers[0]
+      ? weather.DailyWeathers[0].feeling_status
+      : null,
+    cloth_keywords: weather.DailyWeathers[0]
+      ? weather.DailyWeathers[0].DailyCloths.map((dc) =>
+          dc.ClothKeywords.map((ck) => ck.keyword)
+        ).flat()
+      : [],
+  };
+  return {
+    weather: detailedWeather,
   };
 };
