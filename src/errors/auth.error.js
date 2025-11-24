@@ -31,8 +31,19 @@ export class NotRefreshTokenError extends Error {
   }
 }
 
-export class DuplicateError extends Error {
-  errorCode = "duplicate_resource";
+export class DuplicateEmailError extends Error {
+  errorCode = "duplicate_email";
+
+  constructor(reason, data) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+    this.statusCode = 409;
+  }
+}
+
+export class DuplicateLoginIdError extends Error {
+  errorCode = "duplicate_login_id";
 
   constructor(reason, data) {
     super(reason);
