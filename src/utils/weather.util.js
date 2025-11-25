@@ -113,3 +113,81 @@ export const getForecastWeatherDaily = async (latitude, longitude) => {
   };
   return data;
 };
+
+export const getSeason = (() => {
+  const month = new Date().getMonth() + 1;
+  if ([12, 1, 2].includes(month)) return "winter";
+  if ([3, 4, 5].includes(month)) return "spring";
+  if ([6, 7, 8].includes(month)) return "summer";
+  return "autumn";
+})();
+
+export const getDescriptionFromWeather = (weather, yesterday_weather) => {
+  const season = getSeason;
+  console.log(season);
+  let description = [];
+  if (yesterday_weather === null) {
+    description.push("어제의 날씨 정보가 없어 오늘 날씨와 비교할 수 없습니다.");
+  } else if (weather.temp === yesterday_weather.temp) {
+    description.push("오늘은 어제와 비슷한 날씨입니다.");
+  } else {
+    switch (season) {
+      case "winter":
+        if (weather.temp < yesterday_weather.temp) {
+          description.push("오늘은 어제보다 추워졌고,");
+        } else {
+          description.push("오늘은 어제보다 따뜻해졌고,");
+        }
+        break;
+      case "spring":
+        if (weather.temp < yesterday_weather.temp) {
+          description.push("오늘은 어제보다 시원해졌고,");
+        } else {
+          description.push("오늘은 어제보다 따뜻해졌고,");
+        }
+        break;
+      case "summer":
+        if (weather.temp < yesterday_weather.temp) {
+          description.push("오늘은 어제보다 시원해졌고,");
+        } else {
+          description.push("오늘은 어제보다 더워졌고,");
+        }
+        break;
+      case "autumn":
+        if (weather.temp < yesterday_weather.temp) {
+          description.push("오늘은 어제보다 추워졌고,");
+        } else {
+          description.push("오늘은 어제보다 따뜻해졌고,");
+        }
+        break;
+      default:
+        break;
+    }
+    console.log(weather.temp);
+    console.log(yesterday_weather.temp);
+  }
+  switch (weather.main) {
+    case "Rain":
+      description.push("비가 올 예정이니 우산을 챙기세요.");
+      break;
+    case "Snow":
+      description.push("눈이 올 예정이니 따뜻하게 입으세요.");
+      break;
+    case "Clear":
+      description.push("맑은 날씨가 예상됩니다.");
+      break;
+    case "Clouds":
+      description.push("구름이 낀 날씨가 예상됩니다.");
+      break;
+    default:
+      description.push(`오늘의 날씨는 ${weather.main}입니다.`);
+      break;
+  }
+  console.log(weather.main);
+
+  if (weather.temp_max - weather.temp_min >= 10) {
+    description.push("또한, 일교차가 커서 감기에 유의하셔야 해요.");
+  }
+  console.log(weather.temp_max - weather.temp_min);
+  return description.join(" ");
+};

@@ -49,7 +49,7 @@ export const handleGetCalender = async (req, res) => {
                   temp_max: { type: 'number', example: 25.5 },
                   temp_min: { type: 'number', example: 15.3 },
                   feeling_status: { type: 'string', example: "적당" },
-                  clothing_keywords: {
+                  keywords: {
                     type: 'array',
                     items: {
                       type: 'string'
@@ -102,7 +102,8 @@ export const handleGetCalenderDetail = async (req, res) => {
                 temp_max: { type: 'number', example: 22.4 },
                 temp_min: { type: 'number', example: 12.8 },
                 feeling_status: { type: 'string', example: "적당" },
-                clothing_keywords: {
+                text: { type: 'string', example: "오늘은 어제보다 따뜻해졌고, 비가 올 예정이니 우산을 챙기세요." },
+                keywords: {
                   type: 'array',
                   items: {
                     type: 'string'

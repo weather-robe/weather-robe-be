@@ -3,7 +3,10 @@ import {
   responseFromKeywordImages,
   responseFromKeywords,
 } from "../dtos/ai.dto.js";
-import { getDailyWeatherByUserIdAndWeatherId } from "../repositories/weather.repository.js";
+import {
+  getDailyWeatherByUserIdAndDtAndDtype,
+  getDailyWeatherByUserIdAndWeatherId,
+} from "../repositories/weather.repository.js";
 import {
   genaiClient,
   genaiClothingRecommender,
@@ -18,6 +21,7 @@ import {
 } from "../repositories/dailyCloth.repository.js";
 import { genaiModels } from "../models/genai.model.js";
 import { saveGeneratedImages } from "../utils/image.util.js";
+import { getSeason } from "../utils/weather.util.js";
 export const sendMessageForGenAI = async (userId, message) => {
   const ai = await genaiClient(genaiModels.GEMINI_2_5_FLASH, message);
   return responseFromAI({
@@ -30,14 +34,6 @@ export const sendMessageForOpenAI = async (userId, message) => {
     ai: { type: "OpenAI", reply: ai.choices[0].message.content },
   });
 };
-
-const season = (() => {
-  const month = new Date().getMonth() + 1;
-  if ([12, 1, 2].includes(month)) return "winter";
-  if ([3, 4, 5].includes(month)) return "spring";
-  if ([6, 7, 8].includes(month)) return "summer";
-  return "autumn";
-})();
 
 export const getKeywordsFromAI = async ({ user, weather }) => {
   const dailyWeather = await getDailyWeatherByUserIdAndWeatherId(
@@ -57,7 +53,18 @@ export const getKeywordsFromAI = async ({ user, weather }) => {
     await addDailyCloth(dailyWeather.id, keywords);
     dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
   }
-  return responseFromKeywords({ user, dailyCloths: dailyCloth });
+  const yesterday_dt = weather.dt - 24 * 60 * 60;
+  const yesterday_weather = await getDailyWeatherByUserIdAndDtAndDtype(
+    user.userId,
+    yesterday_dt,
+    weather.dtype
+  );
+  return responseFromKeywords({
+    user,
+    weather,
+    yesterday_weather,
+    dailyCloths: dailyCloth,
+  });
 };
 
 export const getKeywordImagesFromAI = async ({ user, weather }) => {
@@ -73,7 +80,10 @@ export const getKeywordImagesFromAI = async ({ user, weather }) => {
     const feels_like_user =
       weather.feels_like +
       (user.weather_correction ? user.weather_correction : 0);
-    const keywords = await genaiClothingRecommender(feels_like_user, season);
+    const keywords = await genaiClothingRecommender(
+      feels_like_user,
+      getSeason()
+    );
     await addDailyCloth(dailyWeather.id, keywords);
     dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
   }
