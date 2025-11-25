@@ -9,6 +9,26 @@ export const getWeather = async (weatherId) => {
   return weather;
 };
 
+export const getDailyWeatherByUserIdAndDtAndDtype = async (
+  userId,
+  dt,
+  dtype
+) => {
+  const dailyWeather = await prisma.dailyWeather.findFirst({
+    where: {
+      userId: userId,
+      weather: {
+        dt: dt,
+        dtype: dtype,
+      },
+    },
+    include: {
+      weather: true,
+    },
+  });
+  return dailyWeather;
+};
+
 export const getWeatherBySidoAndDtypeAndDt = async (sido, dtype, dt) => {
   const weather = await prisma.weather.findFirst({
     where: {

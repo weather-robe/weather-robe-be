@@ -1,6 +1,7 @@
 import ai from "../configs/genai.config.js";
 import { genaiModels } from "../models/genai.model.js";
 import fs from "fs";
+import { uploadImageToS3 } from "./aws.util.js";
 
 export const getGenaiModels = async () => {
   const response = await ai.models.list();
@@ -108,23 +109,22 @@ export const genaiClothingRecommenderImage = async (
 
   if (part && part.inlineData) {
     const imageData = part.inlineData.data;
-    const buffer = Buffer.from(imageData, "base64");
-
-    fs.writeFileSync(
-      `gemini-native-image-${index}-${new Date().getTime()}.png`,
-      buffer
-    );
-    console.log(
-      `Image saved as gemini-native-image-${index}-${new Date().getTime()}.png`
-    );
+    try {
+      const imageUrl = await uploadImageToS3(imageData, "daily-cloth-images");
+      console.log(`Image successfully uploaded to S3: ${imageUrl}`);
+      return imageUrl;
+    } catch (s3Error) {
+      console.error("S3 Upload Error:", s3Error);
+      throw s3Error;
+    }
   } else if (response.text) {
     console.log(
       "Image generation failed, received text response instead:",
       response.text
     );
+    throw new Error("이미지 생성에 실패했습니다: 텍스트 응답이 반환됨.");
   } else {
     console.log("Image generation failed. No inlineData found.");
+    throw new Error("이미지 생성에 실패했습니다: 이미지 데이터 없음.");
   }
-
-  return true;
 };

@@ -92,12 +92,18 @@ export const handleGetKeywords = async (req, res, next) => {
                       userId: { type: 'number', example: 1 }
                     }
                   },
-                  keywords: {
-                    type: 'array',
-                    items: {
-                      type: 'string'
-                    },
-                    example: ["후드티", "청바지", "목도리"]
+                  weather: {
+                    type: 'object',
+                    properties: {
+                      text: { type: 'string', example: '오늘은 맑고 따뜻한 날씨입니다.' },
+                      keywords: {
+                        type: 'array',
+                        items: {
+                          type: 'string'
+                        },
+                        example: ["후드티", "청바지", "목도리"]
+                      }
+                    }
                   }
                 }
               }
