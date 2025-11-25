@@ -77,19 +77,19 @@ export const getKeywordImagesFromAI = async ({ user, weather }) => {
     await addDailyCloth(dailyWeather.id, keywords);
     dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
   }
-  const keywords = dailyCloth[0].ClothKeywords.map((cloth) => cloth.keyword);
-  // const imagePromises = [
-  //   genaiClothingRecommenderImage(keywords, "male", 0),
-  //   genaiClothingRecommenderImage(keywords, "female", 1),
-  //   genaiClothingRecommenderImage(keywords, "male", 2),
-  //   genaiClothingRecommenderImage(keywords, "female", 3),
-  // ];
 
-  // const imageResponses = await Promise.all(imagePromises);
-
-  const imageUrls = ["mock1", "mock2", "mock3", "mock4"]; // 실제로는 imageResponses의 데이터를 S3에 저장 후 URL을 받아와야 합니다.
   let dailyImages = await getDailyClothImagesByDailyClothId(dailyCloth[0].id);
+
   if (dailyImages.length === 0) {
+    const keywords = dailyCloth[0].ClothKeywords.map((cloth) => cloth.keyword);
+    const imagePromises = [
+      genaiClothingRecommenderImage(keywords, "male", 0),
+      genaiClothingRecommenderImage(keywords, "female", 1),
+      genaiClothingRecommenderImage(keywords, "male", 2),
+      genaiClothingRecommenderImage(keywords, "female", 3),
+    ];
+
+    const imageUrls = await Promise.all(imagePromises);
     dailyImages = await addDailyClothImages(dailyCloth[0].id, imageUrls);
   }
   return responseFromKeywordImages({
