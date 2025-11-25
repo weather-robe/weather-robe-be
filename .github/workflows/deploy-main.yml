@@ -58,7 +58,7 @@ jobs:
         run: |
           ssh weather-robe '
             echo "[Unit]
-            Description=MJU RATS Project
+            Description=Weather Robe
             After=network.target
 
             [Service]
