@@ -64,7 +64,7 @@ jobs:
             [Service]
             User=ubuntu
             WorkingDirectory=/opt/app
-            ExecStart=/usr/local/bin/pnpm start
+            ExecStart=/usr/bin/pnpm start
             Restart=always
             Environment=PATH=/usr/local/bin:/usr/bin:/bin
 
