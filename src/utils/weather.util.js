@@ -114,16 +114,16 @@ export const getForecastWeatherDaily = async (latitude, longitude) => {
   return data;
 };
 
-export const getSeason = (() => {
+export const getSeason = () => {
   const month = new Date().getMonth() + 1;
   if ([12, 1, 2].includes(month)) return "winter";
   if ([3, 4, 5].includes(month)) return "spring";
   if ([6, 7, 8].includes(month)) return "summer";
   return "autumn";
-})();
+};
 
 export const getDescriptionFromWeather = (weather, yesterday_weather) => {
-  const season = getSeason;
+  const season = getSeason();
   console.log(season);
   let description = [];
   if (yesterday_weather === null) {
