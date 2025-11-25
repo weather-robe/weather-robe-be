@@ -1,3 +1,5 @@
+import { getDescriptionFromWeather } from "../utils/weather.util.js";
+
 export const bodyToAI = (body) => {
   return {
     message: body.message,
@@ -18,12 +20,20 @@ export const requestForWeatherKeyword = (user, weather) => {
   };
 };
 
-export const responseFromKeywords = ({ user, dailyCloths }) => {
+export const responseFromKeywords = ({
+  user,
+  weather,
+  yesterday_weather,
+  dailyCloths,
+}) => {
   return {
     user: {
       userId: user.id,
     },
-    keywords: dailyCloths[0].ClothKeywords.map((cloth) => cloth.keyword),
+    weather: {
+      text: getDescriptionFromWeather(weather, yesterday_weather),
+      keywords: dailyCloths[0].ClothKeywords.map((cloth) => cloth.keyword),
+    },
   };
 };
 

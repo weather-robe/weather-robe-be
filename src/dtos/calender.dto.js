@@ -1,4 +1,5 @@
 import { dateTimeToDt, dtToDateTime } from "../utils/date.util.js";
+import { getDescriptionFromWeather } from "../utils/weather.util.js";
 
 export const requestForCalender = (userId, startDate, endDate) => {
   return {
@@ -24,7 +25,7 @@ export const responseFromCalendar = ({ weathers }) => {
     feeling_status: w.DailyWeathers[0]
       ? w.DailyWeathers[0].feeling_status
       : null,
-    cloth_keywords: w.DailyWeathers[0]
+    keywords: w.DailyWeathers[0]
       ? w.DailyWeathers[0].DailyCloths.map((dc) =>
           dc.ClothKeywords.map((ck) => ck.keyword)
         ).flat()
@@ -35,7 +36,7 @@ export const responseFromCalendar = ({ weathers }) => {
   };
 };
 
-export const responseFromCalendarDetail = ({ weather }) => {
+export const responseFromCalendarDetail = ({ weather, yesterday_weather }) => {
   if (!weather) {
     return {
       weather: null,
@@ -49,7 +50,8 @@ export const responseFromCalendarDetail = ({ weather }) => {
     feeling_status: weather.DailyWeathers[0]
       ? weather.DailyWeathers[0].feeling_status
       : null,
-    cloth_keywords: weather.DailyWeathers[0]
+    text: getDescriptionFromWeather(weather, yesterday_weather),
+    keywords: weather.DailyWeathers[0]
       ? weather.DailyWeathers[0].DailyCloths.map((dc) =>
           dc.ClothKeywords.map((ck) => ck.keyword)
         ).flat()
