@@ -1,6 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import fs from "fs";
+import path from "path";
+import HTTPS from "https";
 import swaggerUiExpress from "swagger-ui-express";
 import apiRoute from "./routes/index.route.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
@@ -33,7 +36,26 @@ app.use("/v1/api/", apiRoute);
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server: http://localhost:${port}`);
-  console.log(`Docs: http://localhost:${port}/docs`);
-});
+const isSSL = process.env.SSL_ENABLED === "true";
+
+if (isSSL) {
+  const option = {
+    ca: fs.readFileSync(process.env.CA_PATH),
+    key: fs
+      .readFileSync(path.resolve(process.cwd(), process.env.KEY_PATH), "utf8")
+      .toString(),
+    cert: fs
+      .readFileSync(path.resolve(process.cwd(), process.env.CERT_PATH), "utf8")
+      .toString(),
+  };
+
+  const httpsServer = HTTPS.createServer(option, app);
+
+  httpsServer.listen(port, () => {
+    console.log(`[HTTPS+WS] Server is running on port ${port}`);
+  });
+} else {
+  app.listen(port, () => {
+    console.log(`[HTTP] Server is running on http://localhost:${port}`);
+  });
+}
