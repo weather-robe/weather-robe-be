@@ -20,51 +20,37 @@ model User {
   createdAt           DateTime  @default(now()) @map("created_at") @db.DateTime(6)
   updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
 
-  DailyWeathers  DailyWeather[]
-  HourlyWeathers HourlyWeather[]
+  DailyWeathers DailyWeather[]
 
   @@map("user")
 }
 
 model Weather {
-  id         Int      @id @default(autoincrement())
-  dtype      String   @db.VarChar(20) // current, forecast_daily, forecast_hourly
-  dt         Int      @db.Int
-  sido       String   @db.VarChar(100)
-  main       String   @db.VarChar(20)
-  temp       Float    @db.Float
-  temp_max   Float    @db.Float
-  temp_min   Float    @db.Float
-  feels_like Float    @db.Float
-  humidity   Int      @db.Int
-  pop        Float?   @db.Float
-  rain       Float?   @db.Float
-  snow       Float?   @db.Float
-  wind_speed Float    @db.Float
-  wind_deg   Int      @db.Int
-  pm10       Float?   @db.Float
-  pm25       Float?   @db.Float
-  createdAt  DateTime @default(now()) @map("created_at") @db.DateTime(6)
-  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+  id          Int      @id @default(autoincrement())
+  dtype       String   @db.VarChar(20) // current, forecast_daily, forecast_hourly
+  dt          Int      @db.Int
+  sido        String   @db.VarChar(100)
+  main        String   @db.VarChar(20)
+  description String   @db.VarChar(100)
+  temp        Float    @db.Float
+  temp_max    Float    @db.Float
+  temp_min    Float    @db.Float
+  feels_like  Float    @db.Float
+  humidity    Int      @db.Int
+  pop         Float?   @db.Float
+  rain        Float?   @db.Float
+  snow        Float?   @db.Float
+  wind_speed  Float    @db.Float
+  wind_deg    Int      @db.Int
+  pm10        Float?   @db.Float
+  pm25        Float?   @db.Float
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
 
-  DailyWeathers  DailyWeather[]
-  HourlyWeathers HourlyWeather[]
-  TimeBlocks     TimeBlock[]
+  DailyWeathers DailyWeather[]
+  TimeBlocks    TimeBlock[]
 
   @@map("weather")
-}
-
-// 미사용 예정
-model HourlyWeather {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int      @db.Int
-  weather   Weather  @relation(fields: [weatherId], references: [id])
-  weatherId Int      @db.Int
-  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(6)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
-
-  @@map("hourly_weather")
 }
 
 model DailyWeather {
