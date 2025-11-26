@@ -25,7 +25,7 @@ export const getCurrentWeather = async (latitude, longitude) => {
   const data = {
     dt: edit_dt,
     sido: openweather_data.name,
-    main: openweather_data.weather[0].main,
+    main: openweather_data.weather[0].description,
     temp: openweather_data.main.temp,
     temp_max: openweather_data.main.temp_max,
     temp_min: openweather_data.main.temp_min,
@@ -51,7 +51,7 @@ export const getForecastWeatherHourly = async (latitude, longitude) => {
     const data = {
       dt: openweather_data.dt + 9 * 60 * 60,
       sido: openweather_datas.city.name,
-      main: openweather_data.weather[0].main,
+      main: openweather_data.weather[0].description,
       temp: openweather_data.main.temp,
       temp_max: openweather_data.main.temp_max,
       temp_min: openweather_data.main.temp_min,
@@ -94,7 +94,7 @@ export const getForecastWeatherDaily = async (latitude, longitude) => {
     const data = {
       dt: dt,
       sido: openweather_datas.city.name,
-      main: openweather_data.weather[0].main,
+      main: openweather_data.weather[0].description,
       temp: temp,
       feels_like: feels_like,
       humidity: openweather_data.humidity,

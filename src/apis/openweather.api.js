@@ -23,7 +23,7 @@ export const currentWeather = async (
   lang = "kr"
 ) => {
   try {
-    const url = `${process.env.DEFAULT_WEATHER_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=${units}&lang=${lang}`;
+    const url = `${process.env.DEFAULT_WEATHER_URL}/weather?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=${units}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
@@ -39,7 +39,7 @@ export const forecastWeatherHourly = async (
   lang = "kr"
 ) => {
   try {
-    const url = `${process.env.DEFAULT_WEATHER_URL}/forecast/hourly?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=${units}&lang=${lang}&cnt=${cnt}`;
+    const url = `${process.env.DEFAULT_WEATHER_URL}/forecast/hourly?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=${units}&cnt=${cnt}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
@@ -55,7 +55,7 @@ export const forecastWeatherDaily = async (
   lang = "kr"
 ) => {
   try {
-    const url = `${process.env.DEFAULT_WEATHER_URL}/forecast/daily?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=${units}&lang=${lang}&cnt=${cnt}`;
+    const url = `${process.env.DEFAULT_WEATHER_URL}/forecast/daily?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_KEY}&units=${units}&cnt=${cnt}`;
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
