@@ -20,6 +20,9 @@ import {
   getTimeBlocksByWeatherIdsAndDtype,
   addTimeBlock,
   patchTimeBlock,
+  getDailyWeather,
+  getDailyWeatherByWeatherId,
+  getWeather,
 } from "../repositories/weather.repository.js";
 import {
   responseFromDailyWeather,
@@ -128,8 +131,17 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
       pm10: pm10,
       pm25: pm25,
     };
-    daily_weather = (await addDailyWeather(user.id, weather_data))
-      .daily_weather;
+    const { weather } = await addDailyWeather(user.id, weather_data);
+    daily_weather = await getWeather(weather.id);
+    const timeblock_data = {
+      weatherId: weather.id,
+      dtype: DTYPE_TIME_BLOCK.TEMP,
+      night: items[0].temp.night,
+      morn: items[0].temp.morn,
+      day: items[0].temp.day,
+      eve: items[0].temp.eve,
+    };
+    await addTimeBlock(timeblock_data);
   }
   // 최종적으로 사용자 위치 업데이트
   const updatedUser = await patchUserLocation(user.id, current_address.sido);
@@ -167,7 +179,7 @@ export const setFeedbackWeather = async ({ userId, weatherId, feedback }) => {
   });
 };
 
-export const getHourlyWeather = async ({ user, latitude, longitude }) => {
+export const getWeatherHourly = async ({ user, latitude, longitude }) => {
   // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
   if (!latitude || !longitude) {
     //return null; //throw new Error("위도와 경도가 필요합니다.");
@@ -240,7 +252,7 @@ export const getHourlyWeather = async ({ user, latitude, longitude }) => {
   });
 };
 
-export const getDailyWeather = async ({ user, latitude, longitude }) => {
+export const getWeatherDaily = async ({ user, latitude, longitude }) => {
   // 위도 경도가 없으면 서울시청으로 기본 설정  const { user, latitude, longitude } = data;
   if (!latitude || !longitude) {
     //return null; //throw new Error("위도와 경도가 필요합니다.");
