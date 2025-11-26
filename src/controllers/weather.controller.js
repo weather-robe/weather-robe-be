@@ -50,6 +50,7 @@ export const handleGetWeatherToday = async (req, res, next) => {
                   current: {
                     type: 'object',
                     properties: {
+                      weatherId: { type: 'number', example: 1 },
                       temp: { type: 'number', example: 5.45 },
                       weather: { type: 'string', example: 'Clouds' }
                     }
@@ -57,9 +58,15 @@ export const handleGetWeatherToday = async (req, res, next) => {
                   today: {
                     type: 'object',
                     properties: {
-                      temp: { type: 'number', example: 3.1725 },
-                      temp_max: { type: 'number', example: 7.24 },
-                      temp_min: { type: 'number', example: -1.49 },
+                      weatherId: { type: 'number', example: 1 },
+                      temp: { 
+                        type: 'object',
+                        properties: {
+                          avg: { type: 'number', example: 3.1725 },
+                          max: { type: 'number', example: 7.57 },
+                          min: { type: 'number', example: -2.4 }
+                        }
+                      },
                       feels_like: { type: 'number', example: 1.6175 },
                       humidity: { type: 'number', example: 42 },
                       pop: { type: 'number', example: 0 },
@@ -77,6 +84,7 @@ export const handleGetWeatherToday = async (req, res, next) => {
                   yesterday: {
                     type: 'object',
                     properties: {
+                      weatherId: { type: 'number', example: 1 },
                       temp: { type: 'number', example: 2.1325 },
                       temp_max: { type: 'number', example: 7.57 },
                       temp_min: { type: 'number', example: -2.4 }
@@ -335,6 +343,19 @@ export const handleGetDailyWeather = async (req, res, next) => {
                           }
                         },
                         pop: { type: 'number', example: 0 },
+                      }
+                    }
+                  },
+                  yesterday: {
+                    type: 'object',
+                    properties: {
+                      weatherId: { type: 'number', example: 1 },
+                      date: { type: 'string', example: '2023-09-30' },
+                      temp: { type: 'object',
+                        properties: {
+                          max: { type: 'number', example: 6.89 },
+                          min: { type: 'number', example: -0.56 }
+                        }
                       }
                     }
                   }
