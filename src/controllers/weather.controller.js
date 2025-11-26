@@ -325,6 +325,7 @@ export const handleGetDailyWeather = async (req, res, next) => {
                       properties: {
                         weatherId: { type: 'number', example: 1 },
                         date: { type: 'string', example: '2023-10-01' },
+                        weather: { type: 'string', example: 'Clouds' },
                         temp: { type: 'object',
                           properties: {
                             max: { type: 'number', example: 7.24 },

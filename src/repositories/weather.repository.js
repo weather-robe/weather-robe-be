@@ -103,6 +103,15 @@ export const getTimeBlockByWeatherIdAndDtype = async (weatherId, dtype) => {
   return timeBlock;
 };
 
+export const getTimeBlock = async (timeBlockId) => {
+  const timeBlock = await prisma.timeBlock.findUnique({
+    where: {
+      id: timeBlockId,
+    },
+  });
+  return timeBlock;
+};
+
 export const getTimeBlocksByWeatherIdsAndDtype = async (weatherIds, dtype) => {
   const timeBlocks = await prisma.timeBlock.findMany({
     where: {
