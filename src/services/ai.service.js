@@ -49,7 +49,10 @@ export const getKeywordsFromAI = async ({ user, weather }) => {
     const feels_like_user =
       weather.feels_like +
       (user.weather_correction ? user.weather_correction : 0);
-    const keywords = await genaiClothingRecommender(feels_like_user, season);
+    const keywords = await genaiClothingRecommender(
+      feels_like_user,
+      getSeason()
+    );
     await addDailyCloth(dailyWeather.id, keywords);
     dailyCloth = await getDailyClothByDailyId(dailyWeather.id);
   }

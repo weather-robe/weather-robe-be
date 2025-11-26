@@ -36,7 +36,7 @@ export const responseFromWeatherToday = ({
     current: {
       weatherId: current_weather.id,
       temp: current_weather.temp,
-      weather: current_weather.main,
+      weather: current_weather.description,
     },
     today: {
       weatherId: daily_weather.id,
@@ -96,7 +96,7 @@ export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
       time: new Date(weather.dt * 1000).toISOString().split("T")[1].slice(0, 5),
       temp: weather.temp,
       feels_like: weather.feels_like,
-      weather: weather.main,
+      weather: weather.description,
       pop: weather.pop ? weather.pop : 0,
       rain: weather.rain ? weather.rain : 0,
       humidity: weather.humidity,
@@ -124,7 +124,7 @@ export const responseFromDailyWeather = ({
     daily: weathers.map((weather, index) => ({
       weatherId: weather.id,
       date: new Date(weather.dt * 1000).toISOString().split("T")[0],
-      weather: weather.main,
+      weather: weather.description,
       temp: {
         max: weather.temp_max,
         min: weather.temp_min,

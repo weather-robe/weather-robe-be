@@ -19,7 +19,7 @@ export const requestForCalenderDetail = (userId, date) => {
 export const responseFromCalendar = ({ weathers }) => {
   const weather = weathers.map((w) => ({
     date: dtToDateTime(w.dt).toISOString().split("T")[0],
-    weather: w.main,
+    weather: w.description,
     temp_max: w.temp_max,
     temp_min: w.temp_min,
     feeling_status: w.DailyWeathers[0]
@@ -44,7 +44,7 @@ export const responseFromCalendarDetail = ({ weather, yesterday_weather }) => {
   }
   const detailedWeather = {
     date: dtToDateTime(weather.dt).toISOString().split("T")[0],
-    weather: weather.main,
+    weather: weather.description,
     temp_max: weather.temp_max,
     temp_min: weather.temp_min,
     feeling_status: weather.DailyWeathers[0]

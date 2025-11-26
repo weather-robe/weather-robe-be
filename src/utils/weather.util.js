@@ -6,12 +6,6 @@ import {
 import { currentAirPollution } from "../apis/data.api.js";
 import { reverseGeocode } from "./geocoder.util.js";
 import { getDustAddress } from "./address.util.js";
-import {
-  dateTimeToDt,
-  dtToDateTime,
-  spliceMinutesFromDateTime,
-  spliceMinutesFromDt,
-} from "./date.util.js";
 
 export const getCurrentWeather = async (latitude, longitude) => {
   const openweather_data = await currentWeather(latitude, longitude);
@@ -25,7 +19,8 @@ export const getCurrentWeather = async (latitude, longitude) => {
   const data = {
     dt: edit_dt,
     sido: openweather_data.name,
-    main: openweather_data.weather[0].description,
+    main: openweather_data.weather[0].main,
+    description: openweather_data.weather[0].description,
     temp: openweather_data.main.temp,
     temp_max: openweather_data.main.temp_max,
     temp_min: openweather_data.main.temp_min,
@@ -51,7 +46,8 @@ export const getForecastWeatherHourly = async (latitude, longitude) => {
     const data = {
       dt: openweather_data.dt + 9 * 60 * 60,
       sido: openweather_datas.city.name,
-      main: openweather_data.weather[0].description,
+      main: openweather_data.weather[0].main,
+      description: openweather_data.weather[0].description,
       temp: openweather_data.main.temp,
       temp_max: openweather_data.main.temp_max,
       temp_min: openweather_data.main.temp_min,
@@ -94,7 +90,8 @@ export const getForecastWeatherDaily = async (latitude, longitude) => {
     const data = {
       dt: dt,
       sido: openweather_datas.city.name,
-      main: openweather_data.weather[0].description,
+      main: openweather_data.weather[0].main,
+      description: openweather_data.weather[0].description,
       temp: temp,
       feels_like: feels_like,
       humidity: openweather_data.humidity,
@@ -179,10 +176,9 @@ export const getDescriptionFromWeather = (weather, yesterday_weather) => {
       description.push("구름이 낀 날씨가 예상됩니다.");
       break;
     default:
-      description.push(`오늘의 날씨는 ${weather.main}입니다.`);
+      description.push(`오늘의 날씨는 ${weather.description}입니다.`);
       break;
   }
-  console.log(weather.main);
 
   if (weather.temp_max - weather.temp_min >= 10) {
     description.push("또한, 일교차가 커서 감기에 유의하셔야 해요.");
