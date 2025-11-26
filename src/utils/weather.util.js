@@ -124,7 +124,6 @@ export const getSeason = () => {
 
 export const getDescriptionFromWeather = (weather, yesterday_weather) => {
   const season = getSeason();
-  console.log(season);
   let description = [];
   if (yesterday_weather === null) {
     description.push("어제의 날씨 정보가 없어 오늘 날씨와 비교할 수 없습니다.");
