@@ -65,6 +65,7 @@ export const handleGetWeatherToday = async (req, res, next) => {
                       pop: { type: 'number', example: 0 },
                       rain: { type: 'number', nullable: true, example: null },
                       snow: { type: 'number', nullable: true, example: null },
+                      wind_text: { type: 'string', example: '약함' },
                       wind_speed: { type: 'number', example: 4.54 },
                       wind_deg: { type: 'number', example: 253 },
                       pm10: { type: 'number', example: 10 },
@@ -252,6 +253,7 @@ export const handleGetHourlyWeather = async (req, res, next) => {
                         pop: { type: 'number', example: 0 },
                         rain: { type: 'number', nullable: true, example: null },
                         humidity: { type: 'number', example: 42 },
+                        wind_text: { type: 'string', example: '약함' },
                         wind_speed: { type: 'number', example: 4.54 },
                         wind_deg: { type: 'number', example: 253 }
                       }

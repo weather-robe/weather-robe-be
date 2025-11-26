@@ -25,7 +25,7 @@ export const getCurrentWeather = async (latitude, longitude) => {
   const data = {
     dt: edit_dt,
     sido: openweather_data.name,
-    main: openweather_data.weather[0].main,
+    main: openweather_data.weather[0].description,
     temp: openweather_data.main.temp,
     temp_max: openweather_data.main.temp_max,
     temp_min: openweather_data.main.temp_min,
@@ -51,7 +51,7 @@ export const getForecastWeatherHourly = async (latitude, longitude) => {
     const data = {
       dt: openweather_data.dt + 9 * 60 * 60,
       sido: openweather_datas.city.name,
-      main: openweather_data.weather[0].main,
+      main: openweather_data.weather[0].description,
       temp: openweather_data.main.temp,
       temp_max: openweather_data.main.temp_max,
       temp_min: openweather_data.main.temp_min,
@@ -94,7 +94,7 @@ export const getForecastWeatherDaily = async (latitude, longitude) => {
     const data = {
       dt: dt,
       sido: openweather_datas.city.name,
-      main: openweather_data.weather[0].main,
+      main: openweather_data.weather[0].description,
       temp: temp,
       feels_like: feels_like,
       humidity: openweather_data.humidity,
@@ -190,4 +190,51 @@ export const getDescriptionFromWeather = (weather, yesterday_weather) => {
   }
   console.log(weather.temp_max - weather.temp_min);
   return description.join(" ");
+};
+
+export const getDescriptionFromWindSpeed = (wind_speed) => {
+  switch (true) {
+    case typeof wind_speed !== "number" || wind_speed < 0:
+      return "문제 발생: 유효하지 않은 값";
+    case wind_speed === 0:
+      return "없음";
+    case wind_speed < 6:
+      return "약함";
+    case wind_speed < 11:
+      return "주의";
+    case wind_speed < 15:
+      return "경계";
+    case wind_speed < 21:
+      return "위험";
+    case wind_speed >= 21:
+      return "매우 위험";
+    default:
+      return "문제 발생: 알 수 없는 풍속";
+  }
+};
+
+export const getDescriptionFromDustLevel = (pm10, pm25) => {
+  let descriptions = [];
+  if (pm10 <= 30) {
+    descriptions.push("좋음");
+  } else if (pm10 <= 80) {
+    descriptions.push("보통");
+  } else if (pm10 <= 150) {
+    descriptions.push("나쁨");
+  } else {
+    descriptions.push("매우 나쁨");
+  }
+  if (pm25 <= 15) {
+    descriptions.push("좋음");
+  } else if (pm25 <= 50) {
+    descriptions.push("보통");
+  } else if (pm25 <= 100) {
+    descriptions.push("나쁨");
+  } else {
+    descriptions.push("매우 나쁨");
+  }
+  return {
+    pm10text: descriptions[0],
+    pm25text: descriptions[1],
+  };
 };

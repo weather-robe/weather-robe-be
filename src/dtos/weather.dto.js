@@ -1,3 +1,8 @@
+import {
+  getDescriptionFromDustLevel,
+  getDescriptionFromWindSpeed,
+} from "../utils/weather.util.js";
+
 export const requestForWeatherLocation = (user, latitude, longitude) => {
   return {
     user,
@@ -20,6 +25,10 @@ export const responseFromWeatherToday = ({
   daily_weather,
   yesterday_weather,
 }) => {
+  const { pm10text, pm25text } = getDescriptionFromDustLevel(
+    daily_weather.pm10,
+    daily_weather.pm25
+  );
   return {
     user: {
       id: user.id,
@@ -41,9 +50,12 @@ export const responseFromWeatherToday = ({
       pop: daily_weather.pop ? daily_weather.pop : 0,
       rain: daily_weather.rain ? daily_weather.rain : 0,
       snow: daily_weather.snow ? daily_weather.snow : 0,
+      wind_text: getDescriptionFromWindSpeed(daily_weather.wind_speed),
       wind_speed: daily_weather.wind_speed,
       wind_deg: daily_weather.wind_deg,
+      pm10text: pm10text,
       pm10: daily_weather.pm10,
+      pm25text: pm25text,
       pm25: daily_weather.pm25,
     },
     yesterday: {
@@ -70,6 +82,10 @@ export const responseFromDailyWeatherFeedback = ({ userId, daily_weather }) => {
 };
 
 export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
+  const { pm10text, pm25text } = getDescriptionFromDustLevel(
+    hourly_weathers[0].pm10,
+    hourly_weathers[0].pm25
+  );
   return {
     user: {
       id: user.id,
@@ -84,10 +100,13 @@ export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
       pop: weather.pop ? weather.pop : 0,
       rain: weather.rain ? weather.rain : 0,
       humidity: weather.humidity,
+      wind_text: getDescriptionFromWindSpeed(weather.wind_speed),
       wind_speed: weather.wind_speed,
       wind_deg: weather.wind_deg,
     })),
+    pm10text: pm10text,
     pm10: hourly_weathers.length > 0 ? hourly_weathers[0].pm10 : null,
+    pm25text: pm25text,
     pm25: hourly_weathers.length > 0 ? hourly_weathers[0].pm25 : null,
   };
 };
