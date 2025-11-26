@@ -212,3 +212,29 @@ export const getDescriptionFromWindSpeed = (wind_speed) => {
       return "문제 발생: 알 수 없는 풍속";
   }
 };
+
+export const getDescriptionFromDustLevel = (pm10, pm25) => {
+  let descriptions = [];
+  if (pm10 <= 30) {
+    descriptions.push("좋음");
+  } else if (pm10 <= 80) {
+    descriptions.push("보통");
+  } else if (pm10 <= 150) {
+    descriptions.push("나쁨");
+  } else {
+    descriptions.push("매우 나쁨");
+  }
+  if (pm25 <= 15) {
+    descriptions.push("좋음");
+  } else if (pm25 <= 50) {
+    descriptions.push("보통");
+  } else if (pm25 <= 100) {
+    descriptions.push("나쁨");
+  } else {
+    descriptions.push("매우 나쁨");
+  }
+  return {
+    pm10text: descriptions[0],
+    pm25text: descriptions[1],
+  };
+};
