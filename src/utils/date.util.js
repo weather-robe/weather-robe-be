@@ -66,9 +66,17 @@ export const timeDiffInHours = (startTime, endTime) => {
 };
 
 export const getKSTCurrentDt = () => {
-  const date = new Date();
-  date.setMinutes(0, 0, 0);
-  const dt = date.getTime() / 1000 + 9 * 60 * 60;
+  let date = new Date();
+  let dt = 0;
+
+  if (process.env.IS_AWS === "true") {
+    date = new Date(date.getTime() + 1000 * 9 * 60 * 60);
+    date.setMinutes(0, 0, 0);
+    dt = date.getTime() / 1000;
+  } else {
+    date.setMinutes(0, 0, 0);
+    dt = date.getTime() / 1000 + 9 * 60 * 60;
+  }
 
   if (isNaN(date.getTime())) {
     throw new Error("Invalid time value: 시스템 날짜 객체 생성 오류");
@@ -78,10 +86,17 @@ export const getKSTCurrentDt = () => {
 };
 
 export const getKSTDailyDt = () => {
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
+  let date = new Date();
+  let dt = 0;
 
-  const dt = date.getTime() / 1000 + 9 * 60 * 60;
+  if (process.env.IS_AWS === "true") {
+    date = new Date(date.getTime() + 1000 * 9 * 60 * 60);
+    date.setHours(0, 0, 0, 0);
+    dt = date.getTime() / 1000;
+  } else {
+    date.setHours(0, 0, 0, 0);
+    dt = date.getTime() / 1000 + 9 * 60 * 60;
+  }
 
   if (isNaN(date.getTime())) {
     throw new Error("Invalid time value: 시스템 날짜 객체 생성 오류");
