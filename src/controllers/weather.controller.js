@@ -68,7 +68,9 @@ export const handleGetWeatherToday = async (req, res, next) => {
                       wind_text: { type: 'string', example: '약함' },
                       wind_speed: { type: 'number', example: 4.54 },
                       wind_deg: { type: 'number', example: 253 },
+                      pm10text: { type: 'string', example: '좋음' },
                       pm10: { type: 'number', example: 10 },
+                      pm25text: { type: 'string', example: '좋음' },
                       pm25: { type: 'number', example: 3 }
                     }
                   },
@@ -259,7 +261,9 @@ export const handleGetHourlyWeather = async (req, res, next) => {
                       }
                     }
                   },
+                  pm10text: { type: 'string', example: '좋음' },
                   pm10: { type: 'number', example: 10 },
+                  pm25text: { type: 'string', example: '좋음' },
                   pm25: { type: 'number', example: 3 }
                 }
               }
