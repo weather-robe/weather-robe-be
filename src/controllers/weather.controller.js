@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
-  getDailyWeather,
-  getHourlyWeather,
+  getWeatherHourly,
+  getWeatherDaily,
   getWeatherToday,
   setFeedbackWeather,
 } from "../services/weather.service.js";
@@ -271,7 +271,7 @@ export const handleGetHourlyWeather = async (req, res, next) => {
   */
   const user = req.user;
   const { latitude, longitude } = req.body;
-  const result = await getHourlyWeather(
+  const result = await getWeatherHourly(
     requestForWeatherLocation(user, latitude, longitude)
   );
   res.status(StatusCodes.OK).success(result);
@@ -343,7 +343,7 @@ export const handleGetDailyWeather = async (req, res, next) => {
   */
   const user = req.user;
   const { latitude, longitude } = req.body;
-  const result = await getDailyWeather(
+  const result = await getWeatherDaily(
     requestForWeatherLocation(user, latitude, longitude)
   );
   res.status(StatusCodes.OK).success(result);
