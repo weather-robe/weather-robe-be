@@ -23,6 +23,7 @@ import {
   getDailyWeather,
   getDailyWeatherByWeatherId,
   getWeather,
+  getTimeBlock,
 } from "../repositories/weather.repository.js";
 import {
   responseFromDailyWeather,
@@ -361,13 +362,15 @@ export const getWeatherDaily = async ({ user, latitude, longitude }) => {
     }
     if (createData.length > 0) {
       for (let i = 0; i < createTimeBlockData.length; i++) {
-        const ws = (await addDailyWeather(user.id, createData[i])).weather;
+        const { weather: ws } = await addDailyWeather(user.id, createData[i]);
+        const weather = await getWeather(ws.id);
         const ts = await addTimeBlock({
           ...createTimeBlockData[i],
           weatherId: ws.id,
         });
-        weathers.push(ws);
-        timeblocks.push(ts);
+        const timeblock = await getTimeBlock(ts.id);
+        weathers.push(weather);
+        timeblocks.push(timeblock);
       }
     }
     console.log("생성 할 데이터 수:", createData.length);
