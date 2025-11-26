@@ -64,3 +64,28 @@ export const timeDiffInHours = (startTime, endTime) => {
   const diffInMs = endTime - startTime;
   return diffInMs / (1000 * 60 * 60);
 };
+
+export const getKSTCurrentDt = () => {
+  const date = new Date();
+  date.setMinutes(0, 0, 0);
+  const dt = date.getTime() / 1000 + 9 * 60 * 60;
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid time value: 시스템 날짜 객체 생성 오류");
+  }
+
+  return dt;
+};
+
+export const getKSTDailyDt = () => {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+
+  const dt = date.getTime() / 1000 + 9 * 60 * 60;
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid time value: 시스템 날짜 객체 생성 오류");
+  }
+
+  return dt;
+};
