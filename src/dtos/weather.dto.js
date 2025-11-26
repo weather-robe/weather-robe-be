@@ -1,3 +1,5 @@
+import { getDescriptionFromWindSpeed } from "../utils/weather.util.js";
+
 export const requestForWeatherLocation = (user, latitude, longitude) => {
   return {
     user,
@@ -41,6 +43,7 @@ export const responseFromWeatherToday = ({
       pop: daily_weather.pop ? daily_weather.pop : 0,
       rain: daily_weather.rain ? daily_weather.rain : 0,
       snow: daily_weather.snow ? daily_weather.snow : 0,
+      wind_text: getDescriptionFromWindSpeed(daily_weather.wind_speed),
       wind_speed: daily_weather.wind_speed,
       wind_deg: daily_weather.wind_deg,
       pm10: daily_weather.pm10,
@@ -84,6 +87,7 @@ export const responseFromHourlyWeather = ({ user, hourly_weathers }) => {
       pop: weather.pop ? weather.pop : 0,
       rain: weather.rain ? weather.rain : 0,
       humidity: weather.humidity,
+      wind_text: getDescriptionFromWindSpeed(weather.wind_speed),
       wind_speed: weather.wind_speed,
       wind_deg: weather.wind_deg,
     })),

@@ -191,3 +191,24 @@ export const getDescriptionFromWeather = (weather, yesterday_weather) => {
   console.log(weather.temp_max - weather.temp_min);
   return description.join(" ");
 };
+
+export const getDescriptionFromWindSpeed = (wind_speed) => {
+  switch (true) {
+    case typeof wind_speed !== "number" || wind_speed < 0:
+      return "문제 발생: 유효하지 않은 값";
+    case wind_speed === 0:
+      return "없음";
+    case wind_speed < 6:
+      return "약함";
+    case wind_speed < 11:
+      return "주의";
+    case wind_speed < 15:
+      return "경계";
+    case wind_speed < 21:
+      return "위험";
+    case wind_speed >= 21:
+      return "매우 위험";
+    default:
+      return "문제 발생: 알 수 없는 풍속";
+  }
+};
