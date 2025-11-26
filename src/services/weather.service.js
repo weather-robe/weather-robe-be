@@ -32,6 +32,7 @@ import {
   responseFromWeatherToday,
 } from "../dtos/weather.dto.js";
 import { InvalidRequestError } from "../errors/common.error.js";
+import { getKSTCurrentDt, getKSTDailyDt } from "../utils/date.util.js";
 
 const DTYPE_TIME_BLOCK = {
   TEMP: "temp",
@@ -70,9 +71,7 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
     sido
   );
   // DB에 현재 날씨 데이터가 있는지 확인
-  const current_date = new Date();
-  current_date.setMinutes(0, 0, 0);
-  const current_dt = current_date.getTime() / 1000 + 9 * 60 * 60;
+  const current_dt = getKSTCurrentDt();
 
   let current_weather = await getWeatherBySidoAndDtypeAndDt(
     sido,
@@ -85,12 +84,11 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
     current_weather = await getCurrentWeather(newLatitude, newLongitude);
     current_weather.sido = sido;
     current_weather.dtype = DTYPE.CURRENT;
-    current_weather = await addWeather(current_weather);
+    const weather = await addWeather(current_weather);
+    current_weather = await getWeather(weather.id);
   }
 
-  const daily_date = new Date();
-  daily_date.setHours(0, 0, 0, 0);
-  const daily_dt = daily_date.getTime() / 1000 + 9 * 60 * 60;
+  const daily_dt = getKSTDailyDt();
   let daily_weather = await getWeatherBySidoAndDtypeAndDt(
     sido,
     DTYPE.FORECAST_DAILY,
@@ -199,9 +197,7 @@ export const getWeatherHourly = async ({ user, latitude, longitude }) => {
     sido
   );
 
-  const current_date = new Date();
-  current_date.setMinutes(0, 0, 0);
-  const current_dt = current_date.getTime() / 1000 + 9 * 60 * 60;
+  const current_dt = getKSTCurrentDt();
 
   // DB에 모레 날씨 데이터가 있는지 확인 - 값이 부족했거나 1시간이 지났는 지 판단하기 위함
   const day_after_tomorrow_dt = current_dt + HOURLY * 60 * 60;
@@ -236,7 +232,8 @@ export const getWeatherHourly = async ({ user, latitude, longitude }) => {
       }
     }
     if (ids.length > 0) {
-      hourly_weather.push(await patchWeathersIndividually(ids, updateData));
+      const patched_weathers = await patchWeathersIndividually(ids, updateData);
+      hourly_weather.push(...patched_weathers);
       console.log("업데이트 할 데이터 수:", ids.length);
     }
     if (createData.length > 0) {
@@ -272,9 +269,7 @@ export const getWeatherDaily = async ({ user, latitude, longitude }) => {
     sido
   );
 
-  const daily_date = new Date();
-  daily_date.setHours(0, 0, 0, 0);
-  const daily_dt = daily_date.getTime() / 1000 + 9 * 60 * 60;
+  const daily_dt = getKSTDailyDt();
   const ten_days_later_dt = daily_dt + DAILY * 24 * 60 * 60;
   let weathers =
     (await getWeathersBySidoAndDtypeAndDtRange(
@@ -343,7 +338,8 @@ export const getWeatherDaily = async ({ user, latitude, longitude }) => {
       }
     }
     if (ids.length > 0) {
-      weathers.push(await patchWeathersIndividually(ids, updateData));
+      const patched_weathers = await patchWeathersIndividually(ids, updateData);
+      weathers.push(...patched_weathers);
       for (let i = 0; i < ids.length; i++) {
         const timeblock = await getTimeBlockByWeatherIdAndDtype(
           ids[i],
