@@ -24,6 +24,8 @@ export const getWeathersByUserIdAndCalenderDateAndDtype = async (
       dt: true,
       dtype: true,
       main: true,
+      icon: true,
+      description: true,
       temp_max: true,
       temp_min: true,
       DailyWeathers: {
@@ -73,6 +75,8 @@ export const getWeatherByUserIdAndCalenderDateAndDtype = async (
       dt: true,
       dtype: true,
       main: true,
+      icon: true,
+      description: true,
       temp: true,
       temp_max: true,
       temp_min: true,
