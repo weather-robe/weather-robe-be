@@ -52,6 +52,7 @@ export const handleGetWeatherToday = async (req, res, next) => {
                     properties: {
                       weatherId: { type: 'number', example: 1 },
                       temp: { type: 'number', example: 5.45 },
+                      icon: { type: 'string', example: '01n' },
                       weather: { type: 'string', example: 'Clouds' }
                     }
                   },
@@ -259,6 +260,7 @@ export const handleGetHourlyWeather = async (req, res, next) => {
                         time: { type: 'string', example: '15:00' },
                         temp: { type: 'number', example: 3.1725 },
                         feels_like: { type: 'number', example: 1.6175 },
+                        icon: { type: 'string', example: '01n' },
                         weather: { type: 'string', example: 'Clouds' },
                         pop: { type: 'number', example: 0 },
                         rain: { type: 'number', nullable: true, example: null },
@@ -333,6 +335,7 @@ export const handleGetDailyWeather = async (req, res, next) => {
                       properties: {
                         weatherId: { type: 'number', example: 1 },
                         date: { type: 'string', example: '2023-10-01' },
+                        icon: { type: 'string', example: '01n' },
                         weather: { type: 'string', example: 'Clouds' },
                         temp: { type: 'object',
                           properties: {
