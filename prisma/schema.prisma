@@ -31,6 +31,7 @@ model Weather {
   dt          Int      @db.Int
   sido        String   @db.VarChar(100)
   main        String   @db.VarChar(20)
+  icon        String   @db.VarChar(10)
   description String   @db.VarChar(100)
   temp        Float    @db.Float
   temp_max    Float    @db.Float

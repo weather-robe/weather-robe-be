@@ -45,6 +45,7 @@ export const handleGetCalender = async (req, res) => {
                 type: 'object',
                 properties: {
                   date: { type: 'string', example: '2025-11-01' },
+                  icon: { type: 'string', example: '01n' },
                   weather: { type: 'string', example: 'Rain' },
                   temp_max: { type: 'number', example: 25.5 },
                   temp_min: { type: 'number', example: 15.3 },
@@ -98,6 +99,7 @@ export const handleGetCalenderDetail = async (req, res) => {
               type: 'object',
               properties: {
                 date: { type: 'string', example: '2025-11-15' },
+                icon: { type: 'string', example: '01n' },
                 weather: { type: 'string', example: 'Rain' },
                 temp_max: { type: 'number', example: 22.4 },
                 temp_min: { type: 'number', example: 12.8 },

@@ -117,6 +117,7 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
       dtype: DTYPE.FORECAST_DAILY,
       sido: sido,
       main: items[0].main,
+      icon: items[0].icon,
       description: items[0].description,
       temp: temp_avg,
       temp_max: items[0].temp.max,
