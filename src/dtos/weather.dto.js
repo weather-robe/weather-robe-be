@@ -44,8 +44,14 @@ export const responseFromWeatherToday = ({
       feedback: daily_weather.feeling_status,
       temp: {
         avg: daily_weather.temp,
-        max: daily_weather.temp_max,
-        min: daily_weather.temp_min,
+        max:
+          daily_weather.temp_max > current_weather.temp
+            ? daily_weather.temp_max
+            : current_weather.temp,
+        min:
+          daily_weather.temp_min < current_weather.temp
+            ? daily_weather.temp_min
+            : current_weather.temp,
       },
       feels_like: daily_weather.feels_like,
       humidity: daily_weather.humidity,
