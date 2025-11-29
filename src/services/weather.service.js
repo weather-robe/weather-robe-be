@@ -155,6 +155,14 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
   if (!yesterday_weather) {
     console.log("어제 날씨 DB에 없음");
   }
+
+  // feeling_status 값 가져오기
+  const { feeling_status } = await getDailyWeatherByUserIdAndWeatherId(
+    user.id,
+    daily_weather.id
+  );
+  daily_weather.feeling_status = feeling_status;
+
   return responseFromWeatherToday({
     user: updatedUser,
     current_weather: current_weather,

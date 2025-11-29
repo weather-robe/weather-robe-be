@@ -41,6 +41,7 @@ export const responseFromWeatherToday = ({
     },
     today: {
       weatherId: daily_weather.id,
+      feedback: daily_weather.feeling_status,
       temp: {
         avg: daily_weather.temp,
         max: daily_weather.temp_max,

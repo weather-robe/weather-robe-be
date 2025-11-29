@@ -60,6 +60,7 @@ export const handleGetWeatherToday = async (req, res, next) => {
                     type: 'object',
                     properties: {
                       weatherId: { type: 'number', example: 1 },
+                      feedback: { type: 'string', example: '적당' },
                       temp: { 
                         type: 'object',
                         properties: {
