@@ -2,6 +2,7 @@ import {
   responseFromUser,
   responseFromUserWithLocation,
 } from "../dtos/user.dto.js";
+import { InvalidRequestError } from "../errors/common.error.js";
 import {
   getUser,
   patchUserLocation,
