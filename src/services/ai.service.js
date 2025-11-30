@@ -22,6 +22,7 @@ import {
 import { genaiModels } from "../models/genai.model.js";
 import { saveGeneratedImages } from "../utils/image.util.js";
 import { getSeason } from "../utils/weather.util.js";
+import { InvalidRequestError } from "../errors/common.error.js";
 export const sendMessageForGenAI = async (userId, message) => {
   const ai = await genaiClient(genaiModels.GEMINI_2_5_FLASH, message);
   return responseFromAI({

@@ -65,6 +65,28 @@ export const handleGetCalender = async (req, res) => {
       }
     }
   }
+  #swagger.responses[400] = {
+      description: '잘못된 요청',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              resultType: { type: 'string', example: 'FAIL' },
+              error: {
+                type: 'object',
+                properties: {
+                  errorCode: { type: 'string', example: 'invalid_request' },
+                  reason: { type: 'string', example: '시작 날짜와 종료 날짜를 입력해주세요.' },
+                  data: { type: 'object', example: null }
+                }
+              },
+              success: { type: 'object', example: null }
+            }
+          }
+        }
+      }
+    }
   */
   const userId = req.user.id;
   const { startDate, endDate } = req.query;
@@ -119,6 +141,28 @@ export const handleGetCalenderDetail = async (req, res) => {
       }
     }
   }
+  #swagger.responses[400] = {
+      description: '잘못된 요청',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              resultType: { type: 'string', example: 'FAIL' },
+              error: {
+                type: 'object',
+                properties: {
+                  errorCode: { type: 'string', example: 'invalid_request' },
+                  reason: { type: 'string', example: '날짜를 입력해주세요.' },
+                  data: { type: 'object', example: null }
+                }
+              },
+              success: { type: 'object', example: null }
+            }
+          }
+        }
+      }
+    }
   */
   const userId = req.user.id;
   const date = req.query.date;
