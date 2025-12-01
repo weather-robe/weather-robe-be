@@ -55,14 +55,16 @@ model Weather {
 }
 
 model DailyWeather {
-  id             Int      @id @default(autoincrement())
-  user           User     @relation(fields: [userId], references: [id])
-  userId         Int      @db.Int
-  weather        Weather  @relation(fields: [weatherId], references: [id])
-  weatherId      Int      @db.Int
-  feeling_status String?  @db.VarChar(20) // 적당, 추움, 더움
-  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(6)
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
+  id                    Int      @id @default(autoincrement())
+  user                  User     @relation(fields: [userId], references: [id])
+  userId                Int      @db.Int
+  weather               Weather  @relation(fields: [weatherId], references: [id])
+  weatherId             Int      @db.Int
+  feeling_status        String?  @db.VarChar(20) // 적당, 추움, 더움
+  is_keyword_generating Boolean  @default(false) @map("is_keyword_generating")
+  is_image_generating   Boolean  @default(false) @map("is_image_generating")
+  createdAt             DateTime @default(now()) @map("created_at") @db.DateTime(6)
+  updatedAt             DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(6)
 
   DailyCloths DailyCloth[]
 
