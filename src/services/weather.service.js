@@ -172,9 +172,6 @@ export const getWeatherToday = async ({ user, latitude, longitude }) => {
 };
 
 export const setFeedbackWeather = async ({ userId, weatherId, feedback }) => {
-  if (!feedback) {
-    throw new InvalidRequestError("피드백 값을 입력해주세요.");
-  }
   const daily_weather = await getDailyWeatherByUserIdAndWeatherId(
     userId,
     weatherId
